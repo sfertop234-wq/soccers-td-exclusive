@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SOCCERS TOWER DEFENS EXCLUSIVE — Валюты и цены</title>
+  <style>
+    :root {
+      --bg: #0b0f17;
+      --card: #131a26;
+      --card-hover: #192232;
+      --border: #233044;
+      --text: #eef2f7;
+      --muted: #8b9bb4;
+      --accent: #3b82f6;
+      --gold: #f59e0b;
+      --up: #16a34a;
+      --up-bg: rgba(22, 163, 74, 0.16);
+      --down: #dc2626;
+      --down-bg: rgba(220, 38, 38, 0.16);
+      --flat: #94a3b8;
+      --flat-bg: rgba(148, 163, 184, 0.14);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 16px 12px 48px; }
+    .container { max-width: 1080px; margin: 0 auto; }
+
+    header {
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+      padding: 18px; margin-bottom: 18px; display: flex; flex-wrap: wrap;
+      justify-content: space-between; align-items: center; gap: 14px;
+    }
+    .brand-tag {
+      display: inline-block;
+      background: rgba(245, 158, 11, 0.16);
+      color: var(--gold);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      padding: 3px 9px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    h1 { font-size: 1.4rem; margin-bottom: 4px; letter-spacing: 0.02em; }
+    .subtitle { color: var(--muted); font-size: 0.85rem; }
+
+    .status-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+    .pill {
+      padding: 7px 11px; border-radius: 999px; background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border); font-size: 0.8rem; color: var(--muted);
+    }
+    .pill strong { color: var(--text); }
+
+    button, select, input {
+      background: var(--card); color: var(--text); border: 1px solid var(--border);
+      border-radius: 10px; padding: 9px 12px; font-size: 0.9rem; outline: none;
+    }
+    button { background: var(--accent); border-color: var(--accent); font-weight: 600; cursor: pointer; }
+    button:active { transform: scale(0.98); }
+
+    .controls { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; margin-bottom: 18px; }
+    @media (max-width: 680px) { .controls { grid-template-columns: 1fr; } }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 12px; }
+
+    .item-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 15px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px;
+      transition: background 0.15s ease;
+    }
+    .item-card:hover { background: var(--card-hover); }
+    .item-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .item-class { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+    .item-name { font-size: 1.02rem; font-weight: 700; }
+
+    .badge { padding: 4px 8px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; white-space: nowrap; }
+    .badge.up { color: var(--up); background: var(--up-bg); }
+    .badge.down { color: var(--down); background: var(--down-bg); }
+    .badge.flat { color: var(--flat); background: var(--flat-bg); }
+
+    .item-bottom {
+      display: flex; justify-content: space-between; align-items: baseline;
+      border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px;
+    }
+    .value-label { font-size: 0.75rem; color: var(--muted); }
+    .value-price { font-size: 1.3rem; font-weight: 800; color: #60a5fa; }
+    .prev-price { font-size: 0.78rem; color: var(--muted); }
+    .empty { grid-column: 1 / -1; text-align: center; padding: 36px; color: var(--muted); border: 1px dashed var(--border); border-radius: 14px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <div class="brand-tag">EXCLUSIVE</div>
+        <h1>SOCCERS TOWER DEFENS exclusive</h1>
+        <p class="subtitle">Автообновление валют и цен юнитов • Отслеживание роста и падения</p>
+      </div>
+      <div class="status-bar">
+        <div class="pill">Статус: <strong id="sourceLabel">Подключение...</strong></div>
+        <div class="pill">Через: <strong id="countdown">60</strong> сек</div>
+        <button id="refreshBtn" type="button">Обновить сейчас</button>
+      </div>
+    </header>
+
+    <div class="controls">
+      <input id="searchInput" type="search" placeholder="Поиск юнита по названию..." />
+      <select id="classFilter">
+        <option value="ALL">Все классы</option>
+        <option value="ASCENDED">ASCENDED</option>
+        <option value="SPECIAL GRADE">SPECIAL GRADE</option>
+        <option value="ANNIVERSARY">ANNIVERSARY</option>
+        <option value="MYTHIC">MYTHIC</option>
+        <option value="LEGENDARY">LEGENDARY</option>
+        <option value="EPIC">EPIC</option>
+      </select>
+      <select id="trendFilter">
+        <option value="ALL">Все изменения</option>
+        <option value="UP">Поднялась ▲</option>
+        <option value="DOWN">Упала ▼</option>
+        <option value="FLAT">Без изменений —</option>
+      </select>
+    </div>
+
+    <div id="grid" class="grid"></div>
+  </div>
+
+  <script>
+    const TARGET_URL = "https://sorcerer-td-values.com/";
+    const REFRESH_SECONDS = 60;
+    const STORAGE_KEY = "soccers_td_exclusive_history_v1";
+
+    // Полная актуальная база юнитов
+    const FALLBACK_UNITS = [
+      // ASCENDED
+      { name: "Bad The Anniversary Trait", className: "ASCENDED", rawValue: "320", numValue: 320 },
+      { name: "The King Killer", className: "ASCENDED", rawValue: "161K", numValue: 161000 },
+      { name: "Bad heavenly restriction", className: "ASCENDED", rawValue: "70", numValue: 70 },
+      { name: "Bad the honored one", className: "ASCENDED", rawValue: "270", numValue: 270 },
+      { name: "King of Curses evolution", className: "ASCENDED", rawValue: "845", numValue: 845 },
+      { name: "Strongest sorcerer evolution", className: "ASCENDED", rawValue: "590", numValue: 590 },
+      { name: "Sorcerer killer evolution", className: "ASCENDED", rawValue: "265", numValue: 265 },
+      { name: "Curse manipulator evolution", className: "ASCENDED", rawValue: "195", numValue: 195 },
+
+      // SPECIAL GRADE
+      { name: "Projection sorcerer", className: "SPECIAL GRADE", rawValue: "115", numValue: 115 },
+      { name: "Justice sorcerer", className: "SPECIAL GRADE", rawValue: "110", numValue: 110 },
+      { name: "King of Curses christmas", className: "SPECIAL GRADE", rawValue: "130", numValue: 130 },
+      { name: "Lighting sorcerer", className: "SPECIAL GRADE", rawValue: "55", numValue: 55 },
+      { name: "Strongest sorcerer", className: "SPECIAL GRADE", rawValue: "70", numValue: 70 },
+      { name: "Strongest sorcerer christmas", className: "SPECIAL GRADE", rawValue: "80", numValue: 80 },
+      { name: "Red scarf sorcerer awakened", className: "SPECIAL GRADE", rawValue: "50", numValue: 50 },
+      { name: "Strongest sorcerer zombie", className: "SPECIAL GRADE", rawValue: "35", numValue: 35 },
+      { name: "King of Curses", className: "SPECIAL GRADE", rawValue: "40", numValue: 40 },
+      { name: "Volcano curse", className: "SPECIAL GRADE", rawValue: "43", numValue: 43 },
+      { name: "Nature curse", className: "SPECIAL GRADE", rawValue: "39", numValue: 39 },
+      { name: "Ocean curse", className: "SPECIAL GRADE", rawValue: "37", numValue: 37 },
+      { name: "Sorcerer killer", className: "SPECIAL GRADE", rawValue: "23", numValue: 23 },
+      { name: "Soul curse awakened", className: "SPECIAL GRADE", rawValue: "21", numValue: 21 },
+      { name: "Mass sorcerer", className: "SPECIAL GRADE", rawValue: "19", numValue: 19 },
+      { name: "Cursed sorcerer", className: "SPECIAL GRADE", rawValue: "17", numValue: 17 },
+      { name: "Overtime sorcerer awakened", className: "SPECIAL GRADE", rawValue: "16", numValue: 16 },
+      { name: "Curse manipulator", className: "SPECIAL GRADE", rawValue: "15", numValue: 15 },
+      { name: "Jackpot sorcerer", className: "SPECIAL GRADE", rawValue: "14", numValue: 14 },
+
+      // ANNIVERSARY
+      { name: "Cursed Sorcerer Wrangler", className: "ANNIVERSARY", rawValue: "150", numValue: 150 },
+      { name: "Shadow sorcerer party", className: "ANNIVERSARY", rawValue: "205", numValue: 205 },
+      { name: "Strongest sorcerer disco", className: "ANNIVERSARY", rawValue: "55", numValue: 55 },
+      { name: "Party cannon", className: "ANNIVERSARY", rawValue: "35", numValue: 35 },
+
+      // MYTHIC
+      { name: "Boogie Sorcerer Anniversary", className: "MYTHIC", rawValue: "5", numValue: 5 },
+      { name: "Dance Floor", className: "MYTHIC", rawValue: "10", numValue: 10 },
+      { name: "Candy Machine", className: "MYTHIC", rawValue: "865", numValue: 865 },
+      { name: "Explosive sorcerer", className: "MYTHIC", rawValue: "19", numValue: 19 },
+      { name: "Red scarf sorcerer summer", className: "MYTHIC", rawValue: "30.5K", numValue: 30500 },
+      { name: "Tree of Life", className: "MYTHIC", rawValue: "1,640", numValue: 1640 },
+      { name: "Harvester curse", className: "MYTHIC", rawValue: "2,225", numValue: 2225 },
+      { name: "Frost blossom", className: "MYTHIC", rawValue: "765", numValue: 765 },
+      { name: "Frames sorcerer", className: "MYTHIC", rawValue: "950", numValue: 950 },
+      { name: "Shadow sorcerer", className: "MYTHIC", rawValue: "275", numValue: 275 },
+      { name: "Kogane", className: "MYTHIC", rawValue: "940", numValue: 940 },
+      { name: "Gaze sorcerer", className: "MYTHIC", rawValue: "50", numValue: 50 },
+      { name: "Pinata", className: "MYTHIC", rawValue: "500", numValue: 500 },
+      { name: "Wealth sorcerer", className: "MYTHIC", rawValue: "275", numValue: 275 },
+      { name: "Mecha sorcerer christmas", className: "MYTHIC", rawValue: "30", numValue: 30 },
+      { name: "Blood curse", className: "MYTHIC", rawValue: "240", numValue: 240 },
+      { name: "Ice manipulator christmas", className: "MYTHIC", rawValue: "20", numValue: 20 },
+      { name: "Barrier sorcerer", className: "MYTHIC", rawValue: "15", numValue: 15 },
+      { name: "Soul curse", className: "MYTHIC", rawValue: "13", numValue: 13 },
+      { name: "Amplifying sorcerer", className: "MYTHIC", rawValue: "7", numValue: 7 },
+      { name: "Red scarf sorcerer anniversary", className: "MYTHIC", rawValue: "6", numValue: 6 },
+      { name: "Bow sorcerer awakened", className: "MYTHIC", rawValue: "6", numValue: 6 },
+      { name: "Guitar sorcerer dj", className: "MYTHIC", rawValue: "15", numValue: 15 },
+      { name: "Boogie sorcerer awakened", className: "MYTHIC", rawValue: "2", numValue: 2 },
+      { name: "Blood manipulator awakened", className: "MYTHIC", rawValue: "2", numValue: 2 },
+      { name: "Star sorcerer", className: "MYTHIC", rawValue: "1", numValue: 1 },
+      { name: "Overtime zombie", className: "MYTHIC", rawValue: "1", numValue: 1 },
+      { name: "Soul curse christmas", className: "MYTHIC", rawValue: "1", numValue: 1 },
+      { name: "Mask sorcerer", className: "MYTHIC", rawValue: "1", numValue: 1 },
+      { name: "Mecha sorcerer", className: "MYTHIC", rawValue: "1", numValue: 1 },
+      { name: "Overtime sorcerer", className: "MYTHIC", rawValue: "1", numValue: 1 },
+      { name: "Red scarf sorcerer", className: "MYTHIC", rawValue: "1", numValue: 1 },
+
+      // LEGENDARY
+      { name: "Claw sorcerer", className: "LEGENDARY", rawValue: "11", numValue: 11 },
+      { name: "Miracle sorcerer", className: "LEGENDARY", rawValue: "3,150", numValue: 3150 },
+      { name: "Discount sorcerer", className: "LEGENDARY", rawValue: "295", numValue: 295 },
+      { name: "Rope sorcerer", className: "LEGENDARY", rawValue: "405", numValue: 405 },
+      { name: "Slot machine", className: "LEGENDARY", rawValue: "85", numValue: 85 },
+      { name: "Helicopter sorcerer", className: "LEGENDARY", rawValue: "16", numValue: 16 },
+      { name: "Hand sorcerer", className: "LEGENDARY", rawValue: "13", numValue: 13 },
+      { name: "Paperbag sorcerer", className: "LEGENDARY", rawValue: "10", numValue: 10 },
+      { name: "Tough sorcerer", className: "LEGENDARY", rawValue: "10", numValue: 10 },
+      { name: "Pain killer", className: "LEGENDARY", rawValue: "10", numValue: 10 },
+      { name: "Ice manipulator", className: "LEGENDARY", rawValue: "8", numValue: 8 },
+      { name: "Cursed atm", className: "LEGENDARY", rawValue: "5", numValue: 5 },
+      { name: "Broom sorcerer witch", className: "LEGENDARY", rawValue: "8", numValue: 8 },
+
+      // EPIC
+      { name: "Sorcerer agent", className: "EPIC", rawValue: "15", numValue: 15 },
+      { name: "Reverse energy sorcerer", className: "EPIC", rawValue: "10", numValue: 10 },
+      { name: "Sorcerer agent summer", className: "EPIC", rawValue: "10", numValue: 10 },
+      { name: "Sorcerer agent christmas", className: "EPIC", rawValue: "15", numValue: 15 }
+    ];
+
+    let units = [];
+    let countdown = REFRESH_SECONDS;
+
+    const gridEl = document.getElementById("grid");
+    const searchEl = document.getElementById("searchInput");
+    const classEl = document.getElementById("classFilter");
+    const trendEl = document.getElementById("trendFilter");
+    const countdownEl = document.getElementById("countdown");
+    const sourceEl = document.getElementById("sourceLabel");
+    const refreshBtn = document.getElementById("refreshBtn");
+
+    function parseNumberValue(str) {
+      if (!str) return 0;
+      const clean = str.replace(/,/g, "").trim().toUpperCase();
+      if (clean.endsWith("K")) return parseFloat(clean) * 1000;
+      if (clean.endsWith("M")) return parseFloat(clean) * 1000000;
+      return parseFloat(clean) || 0;
+    }
+
+    function loadHistory() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+      } catch {
+        return {};
+      }
+    }
+
+    function saveHistory(map) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(map));
+      } catch {}
+    }
+
+    function parseSiteHTML(html) {
+      const doc = new DOMParser().parseFromString(html, "text/html");
+      const parsed = [];
+      const seen = new Set();
+
+      const allBlocks = doc.querySelectorAll("div, article, section");
+      allBlocks.forEach((el) => {
+        const text = el.innerText || "";
+        if (!text.includes("VALUE") || !text.includes("DEMAND")) return;
+        if (text.length > 350) return;
+
+        const lines = text.split("\n").map(l => l.trim()).filter(Boolean);
+        const valIdx = lines.findIndex(l => l.toUpperCase() === "VALUE");
+        if (valIdx === -1 || !lines[valIdx + 1]) return;
+
+        const rawValue = lines[valIdx + 1];
+        const numValue = parseNumberValue(rawValue);
+        if (numValue <= 0) return;
+
+        let className = "OTHER";
+        const knownClasses = ["ASCENDED", "SPECIAL GRADE", "ANNIVERSARY", "MYTHIC", "LEGENDARY", "EPIC"];
+        for (const c of knownClasses) {
+          if (lines.some(l => l.toUpperCase().includes(c))) {
+            className = c;
+            break;
+          }
+        }
+
+        let name = "";
+        for (let i = valIdx - 1; i >= 0; i--) {
+          const candidate = lines[i];
+          if (!knownClasses.includes(candidate.toUpperCase()) && candidate.length > 2) {
+            name = candidate;
+            break;
+          }
+        }
+
+        if (name && !seen.has(name)) {
+          seen.add(name);
+          parsed.push({ name, className, rawValue, numValue });
+        }
+      });
+
+      return parsed;
+    }
+
+    async function fetchFromSorcererValues() {
+      const proxies = [
+        `https://api.allorigins.win/get?url=${encodeURIComponent(TARGET_URL)}`,
+        `https://corsproxy.io/?${encodeURIComponent(TARGET_URL)}`
+      ];
+
+      for (const proxyUrl of proxies) {
+        try {
+          const res = await fetch(proxyUrl, { cache: "no-store" });
+          if (!res.ok) continue;
+          let html = "";
+          if (proxyUrl.includes("allorigins")) {
+            const json = await res.json();
+            html = json.contents || "";
+          } else {
+            html = await res.text();
+          }
+          const items = parseSiteHTML(html);
+          if (items.length >= 5) return items;
+        } catch {}
+      }
+      return null;
+    }
+
+    async function syncValues() {
+      sourceEl.textContent = "Обновление с сайта...";
+      const history = loadHistory();
+      const liveItems = await fetchFromSorcererValues();
+
+      let currentList = liveItems;
+      if (liveItems) {
+        sourceEl.textContent = `Live: sorcerer-td-values.com (${liveItems.length} шт.)`;
+      } else {
+        sourceEl.textContent = `Актуальная база (${FALLBACK_UNITS.length} юнитов)`;
+        currentList = FALLBACK_UNITS;
+      }
+
+      const nextHistory = { ...history };
+
+      units = currentList.map((item) => {
+        const old = history[item.name];
+        let prevRaw = old ? old.rawValue : item.rawValue;
+        let prevNum = old ? old.numValue : item.numValue;
+        let trend = "FLAT";
+
+        if (old && item.numValue > prevNum) {
+          trend = "UP";
+        } else if (old && item.numValue < prevNum) {
+          trend = "DOWN";
+        } else if (old && old.trend && item.numValue === prevNum) {
+          trend = old.trend;
+          prevRaw = old.prevRaw || prevRaw;
+        }
+
+        nextHistory[item.name] = {
+          rawValue: item.rawValue,
+          numValue: item.numValue,
+          prevRaw,
+          trend
+        };
+
+        return {
+          ...item,
+          prevRaw,
+          trend
+        };
+      });
+
+      saveHistory(nextHistory);
+      countdown = REFRESH_SECONDS;
+      render();
+    }
+
+    function render() {
+      const q = searchEl.value.trim().toLowerCase();
+      const cls = classEl.value;
+      const trd = trendEl.value;
+
+      const filtered = units.filter((u) => {
+        const matchName = u.name.toLowerCase().includes(q);
+        const matchClass = cls === "ALL" || u.className === cls;
+        const matchTrend = trd === "ALL" || u.trend === trd;
+        return matchName && matchClass && matchTrend;
+      });
+
+      if (!filtered.length) {
+        gridEl.innerHTML = `<div class="empty">Юниты не найдены.</div>`;
+        return;
+      }
+
+      gridEl.innerHTML = filtered.map((u) => {
+        let badgeClass = "flat";
+        let badgeText = "— Без изменений";
+        if (u.trend === "UP") {
+          badgeClass = "up";
+          badgeText = "▲ Поднялась";
+        } else if (u.trend === "DOWN") {
+          badgeClass = "down";
+          badgeText = "▼ Упала";
+        }
+
+        return `
+          <article class="item-card">
+            <div class="item-top">
+              <div>
+                <div class="item-class">${u.className}</div>
+                <div class="item-name">${u.name}</div>
+              </div>
+              <span class="badge ${badgeClass}">${badgeText}</span>
+            </div>
+            <div class="item-bottom">
+              <div>
+                <div class="value-label">Стоимость (STD)</div>
+                <div class="value-price">${u.rawValue}</div>
+              </div>
+              <div class="prev-price">Было: ${u.prevRaw}</div>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    searchEl.addEventListener("input", render);
+    classEl.addEventListener("change", render);
+    trendEl.addEventListener("change", render);
+    refreshBtn.addEventListener("click", syncValues);
+
+    syncValues();
+    setInterval(() => {
+      countdown -= 1;
+      if (countdown <= 0) {
+        syncValues();
+      } else {
+        countdownEl.textContent = String(countdown);
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
