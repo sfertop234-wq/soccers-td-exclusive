@@ -197,17 +197,17 @@
     .code-str { font-family: monospace; font-size: 1.05rem; font-weight: 700; color: var(--gold); }
     .ok-msg { color: #16a34a; font-size: 0.85rem; font-weight: 600; }
     body:not([data-theme="classic"]) .ok-msg { color: #4ade80; }
-    .hidden { display: none; }
+    .hidden { display: none !important; }
 
     /* МОДАЛЬНОЕ ОКНО НАСТРОЕК */
     .modal-backdrop {
-      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.65);
-      display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 50;
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.72);
+      display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 999;
     }
     .modal-card {
       background: var(--card); border: 1px solid var(--border); border-radius: 16px;
       padding: 20px; width: 100%; max-width: 540px; max-height: 90vh; overflow-y: auto;
-      display: grid; gap: 14px;
+      display: grid; gap: 14px; position: relative; z-index: 1000;
     }
     .theme-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
     @media (max-width: 480px) { .theme-grid { grid-template-columns: 1fr; } }
@@ -566,7 +566,10 @@
         </div>
         <div>
           <label class="subtitle" style="display:block; margin-bottom:4px;">Фото / Аватар (ссылка или загрузить файл)</label>
-          <input id="accAvatarInput" type="text" placeholder="https://... или выберите файл ниже" />
+          <div style="display:flex; gap:8px; align-items:center;">
+            <input id="accAvatarInput" type="text" placeholder="https://... или выберите файл ниже" />
+            <button id="clearAvatarBtn" type="button" class="secondary-btn" style="padding:8px 10px; font-size:0.8rem;">Сбросить</button>
+          </div>
           <input id="accAvatarFile" type="file" accept="image/*" style="margin-top:6px; padding:6px;" />
         </div>
         <div>
@@ -577,7 +580,7 @@
 
       <div style="display:flex; gap:10px; justify-content:flex-end;">
         <button id="cancelSettingsBtn" type="button" class="secondary-btn">Закрыть</button>
-        <button id="saveSettingsBtn" type="button" class="action-btn">Сохранить настройки</button>
+        <button id="saveSettingsBtn" type="button" class="action-btn">Сохранить и закрыть</button>
       </div>
       <div id="settingsSavedNote" class="ok-msg hidden">Настройки сохранены!</div>
     </div>
@@ -588,7 +591,6 @@
     const ADMIN_PASSWORD = "rodrod123123";
 
     const DEFAULT_UNITS = [
-      // ASCENDED
       { name: "Bad The Anniversary Trait", className: "ASCENDED", rawValue: "320", prevRaw: "300" },
       { name: "The King Killer", className: "ASCENDED", rawValue: "161K", prevRaw: "155K" },
       { name: "Bad heavenly restriction", className: "ASCENDED", rawValue: "70", prevRaw: "70" },
@@ -597,8 +599,6 @@
       { name: "Strongest sorcerer evolution", className: "ASCENDED", rawValue: "590", prevRaw: "610" },
       { name: "Sorcerer killer evolution", className: "ASCENDED", rawValue: "265", prevRaw: "265" },
       { name: "Curse manipulator evolution", className: "ASCENDED", rawValue: "195", prevRaw: "205" },
-
-      // SPECIAL GRADE
       { name: "Projection sorcerer", className: "SPECIAL GRADE", rawValue: "115", prevRaw: "105" },
       { name: "Justice sorcerer", className: "SPECIAL GRADE", rawValue: "110", prevRaw: "110" },
       { name: "King of Curses christmas", className: "SPECIAL GRADE", rawValue: "130", prevRaw: "120" },
@@ -618,14 +618,10 @@
       { name: "Overtime sorcerer awakened", className: "SPECIAL GRADE", rawValue: "16", prevRaw: "15" },
       { name: "Curse manipulator", className: "SPECIAL GRADE", rawValue: "15", prevRaw: "15" },
       { name: "Jackpot sorcerer", className: "SPECIAL GRADE", rawValue: "14", prevRaw: "16" },
-
-      // ANNIVERSARY
       { name: "Cursed Sorcerer Wrangler", className: "ANNIVERSARY", rawValue: "110", prevRaw: "150" },
       { name: "Shadow sorcerer party", className: "ANNIVERSARY", rawValue: "205", prevRaw: "190" },
       { name: "Strongest sorcerer disco", className: "ANNIVERSARY", rawValue: "55", prevRaw: "55" },
       { name: "Party cannon", className: "ANNIVERSARY", rawValue: "35", prevRaw: "40" },
-
-      // MYTHIC
       { name: "Red scarf sorcerer summer", className: "MYTHIC", rawValue: "30.5K", prevRaw: "29K" },
       { name: "Harvester curse", className: "MYTHIC", rawValue: "2,225", prevRaw: "2,100" },
       { name: "Tree of Life", className: "MYTHIC", rawValue: "1,640", prevRaw: "1,700" },
@@ -658,8 +654,6 @@
       { name: "Mecha sorcerer", className: "MYTHIC", rawValue: "1", prevRaw: "1" },
       { name: "Overtime sorcerer", className: "MYTHIC", rawValue: "1", prevRaw: "1" },
       { name: "Red scarf sorcerer", className: "MYTHIC", rawValue: "1", prevRaw: "1" },
-
-      // LEGENDARY
       { name: "Miracle sorcerer", className: "LEGENDARY", rawValue: "3,150", prevRaw: "3,000" },
       { name: "Rope sorcerer", className: "LEGENDARY", rawValue: "405", prevRaw: "390" },
       { name: "Discount sorcerer", className: "LEGENDARY", rawValue: "295", prevRaw: "310" },
@@ -673,8 +667,6 @@
       { name: "Ice manipulator", className: "LEGENDARY", rawValue: "8", prevRaw: "8" },
       { name: "Broom sorcerer witch", className: "LEGENDARY", rawValue: "8", prevRaw: "8" },
       { name: "Cursed atm", className: "LEGENDARY", rawValue: "5", prevRaw: "6" },
-
-      // EPIC
       { name: "Sorcerer agent", className: "EPIC", rawValue: "15", prevRaw: "12" },
       { name: "Sorcerer agent christmas", className: "EPIC", rawValue: "15", prevRaw: "15" },
       { name: "Reverse energy sorcerer", className: "EPIC", rawValue: "10", prevRaw: "10" },
@@ -720,8 +712,16 @@
 
     function renderAvatarEl(el, name, avatarUrl) {
       if (!el) return;
-      if (avatarUrl && avatarUrl.trim()) {
-        el.innerHTML = `<img src="${avatarUrl.trim()}" alt="${name}" onerror="this.remove(); this.parentElement.textContent='${(name || "Г").slice(0,1).toUpperCase()}';" />`;
+      const cleanUrl = (avatarUrl || "").trim();
+      if (cleanUrl) {
+        const img = document.createElement("img");
+        img.src = cleanUrl;
+        img.alt = name || "Аватар";
+        img.onerror = () => {
+          el.textContent = (name || "Г").slice(0, 1).toUpperCase();
+        };
+        el.innerHTML = "";
+        el.appendChild(img);
       } else {
         el.textContent = (name || "Г").slice(0, 1).toUpperCase();
       }
@@ -768,6 +768,8 @@
       document.getElementById("accNameInput").value = localStorage.getItem(NICK_KEY) || "";
       document.getElementById("accAvatarInput").value = localStorage.getItem(AVATAR_KEY) || "";
       document.getElementById("accBioInput").value = localStorage.getItem(BIO_KEY) || "";
+      document.getElementById("accAvatarFile").value = "";
+      document.getElementById("settingsSavedNote").classList.add("hidden");
       document.querySelectorAll(".theme-option").forEach(btn => {
         btn.classList.toggle("active", btn.dataset.themeChoice === draftTheme);
       });
@@ -1291,10 +1293,15 @@
     }
 
     // СОБЫТИЯ НАСТРОЕК И АККАУНТА
+    const settingsModal = document.getElementById("settingsModal");
     document.getElementById("openSettingsBtn").addEventListener("click", openSettingsModal);
     document.getElementById("headerProfileBtn").addEventListener("click", openSettingsModal);
     document.getElementById("closeSettingsBtn").addEventListener("click", closeSettingsModal);
     document.getElementById("cancelSettingsBtn").addEventListener("click", closeSettingsModal);
+
+    settingsModal.addEventListener("click", (e) => {
+      if (e.target === settingsModal) closeSettingsModal();
+    });
 
     document.querySelectorAll(".theme-option").forEach(btn => {
       btn.addEventListener("click", () => {
@@ -1306,6 +1313,12 @@
 
     ["accNameInput", "accAvatarInput", "accBioInput"].forEach(id => {
       document.getElementById(id).addEventListener("input", updateModalPreview);
+    });
+
+    document.getElementById("clearAvatarBtn").addEventListener("click", () => {
+      document.getElementById("accAvatarInput").value = "";
+      document.getElementById("accAvatarFile").value = "";
+      updateModalPreview();
     });
 
     document.getElementById("accAvatarFile").addEventListener("change", (e) => {
@@ -1324,19 +1337,23 @@
       const nextAvatar = document.getElementById("accAvatarInput").value.trim();
       const nextBio = document.getElementById("accBioInput").value.trim();
 
-      localStorage.setItem(NICK_KEY, nextName);
-      localStorage.setItem(AVATAR_KEY, nextAvatar);
-      localStorage.setItem(BIO_KEY, nextBio);
+      try {
+        localStorage.setItem(NICK_KEY, nextName);
+        localStorage.setItem(BIO_KEY, nextBio);
+        if (nextAvatar.length < 400000) {
+          localStorage.setItem(AVATAR_KEY, nextAvatar);
+        } else {
+          localStorage.removeItem(AVATAR_KEY);
+          alert("Файл аватара слишком большой для локального сохранения, имя и био сохранены. Лучше вставить ссылку на картинку.");
+        }
+      } catch {
+        localStorage.removeItem(AVATAR_KEY);
+      }
+
       applyTheme(draftTheme);
       syncProfileUI();
       sendHeartbeat();
-
-      const note = document.getElementById("settingsSavedNote");
-      note.classList.remove("hidden");
-      setTimeout(() => {
-        note.classList.add("hidden");
-        document.getElementById("settingsModal").classList.add("hidden");
-      }, 600);
+      closeSettingsModal();
     });
 
     document.getElementById("saveAnnounceBtn").addEventListener("click", async () => {
