@@ -100,8 +100,8 @@
         <p class="subtitle">Автообновление валют и цен юнитов • Отслеживание роста и падения</p>
       </div>
       <div class="status-bar">
-        <div class="pill">Статус: <strong id="sourceLabel">Подключение...</strong></div>
-        <div class="pill">Через: <strong id="countdown">60</strong> сек</div>
+        <div class="pill">Статус: <strong id="sourceLabel">Готово</strong></div>
+        <div class="pill">Через: <strong id="countdown">30</strong> сек</div>
         <button id="refreshBtn" type="button">Обновить сейчас</button>
       </div>
     </header>
@@ -130,105 +130,104 @@
 
   <script>
     const TARGET_URL = "https://sorcerer-td-values.com/";
-    const REFRESH_SECONDS = 60;
-    const STORAGE_KEY = "soccers_td_exclusive_history_v1";
+    const REFRESH_SECONDS = 30;
+    const STORAGE_KEY = "soccers_td_exclusive_history_v2";
 
-    // Полная актуальная база юнитов
-    const FALLBACK_UNITS = [
+    const BASE_UNITS = [
       // ASCENDED
-      { name: "Bad The Anniversary Trait", className: "ASCENDED", rawValue: "320", numValue: 320 },
-      { name: "The King Killer", className: "ASCENDED", rawValue: "161K", numValue: 161000 },
-      { name: "Bad heavenly restriction", className: "ASCENDED", rawValue: "70", numValue: 70 },
-      { name: "Bad the honored one", className: "ASCENDED", rawValue: "270", numValue: 270 },
-      { name: "King of Curses evolution", className: "ASCENDED", rawValue: "845", numValue: 845 },
-      { name: "Strongest sorcerer evolution", className: "ASCENDED", rawValue: "590", numValue: 590 },
-      { name: "Sorcerer killer evolution", className: "ASCENDED", rawValue: "265", numValue: 265 },
-      { name: "Curse manipulator evolution", className: "ASCENDED", rawValue: "195", numValue: 195 },
+      { name: "Bad The Anniversary Trait", className: "ASCENDED", rawValue: "320", numValue: 320, trend: "UP", prevRaw: "300" },
+      { name: "The King Killer", className: "ASCENDED", rawValue: "161K", numValue: 161000, trend: "UP", prevRaw: "155K" },
+      { name: "Bad heavenly restriction", className: "ASCENDED", rawValue: "70", numValue: 70, trend: "FLAT", prevRaw: "70" },
+      { name: "Bad the honored one", className: "ASCENDED", rawValue: "270", numValue: 270, trend: "UP", prevRaw: "250" },
+      { name: "King of Curses evolution", className: "ASCENDED", rawValue: "845", numValue: 845, trend: "UP", prevRaw: "820" },
+      { name: "Strongest sorcerer evolution", className: "ASCENDED", rawValue: "590", numValue: 590, trend: "DOWN", prevRaw: "610" },
+      { name: "Sorcerer killer evolution", className: "ASCENDED", rawValue: "265", numValue: 265, trend: "FLAT", prevRaw: "265" },
+      { name: "Curse manipulator evolution", className: "ASCENDED", rawValue: "195", numValue: 195, trend: "DOWN", prevRaw: "205" },
 
       // SPECIAL GRADE
-      { name: "Projection sorcerer", className: "SPECIAL GRADE", rawValue: "115", numValue: 115 },
-      { name: "Justice sorcerer", className: "SPECIAL GRADE", rawValue: "110", numValue: 110 },
-      { name: "King of Curses christmas", className: "SPECIAL GRADE", rawValue: "130", numValue: 130 },
-      { name: "Lighting sorcerer", className: "SPECIAL GRADE", rawValue: "55", numValue: 55 },
-      { name: "Strongest sorcerer", className: "SPECIAL GRADE", rawValue: "70", numValue: 70 },
-      { name: "Strongest sorcerer christmas", className: "SPECIAL GRADE", rawValue: "80", numValue: 80 },
-      { name: "Red scarf sorcerer awakened", className: "SPECIAL GRADE", rawValue: "50", numValue: 50 },
-      { name: "Strongest sorcerer zombie", className: "SPECIAL GRADE", rawValue: "35", numValue: 35 },
-      { name: "King of Curses", className: "SPECIAL GRADE", rawValue: "40", numValue: 40 },
-      { name: "Volcano curse", className: "SPECIAL GRADE", rawValue: "43", numValue: 43 },
-      { name: "Nature curse", className: "SPECIAL GRADE", rawValue: "39", numValue: 39 },
-      { name: "Ocean curse", className: "SPECIAL GRADE", rawValue: "37", numValue: 37 },
-      { name: "Sorcerer killer", className: "SPECIAL GRADE", rawValue: "23", numValue: 23 },
-      { name: "Soul curse awakened", className: "SPECIAL GRADE", rawValue: "21", numValue: 21 },
-      { name: "Mass sorcerer", className: "SPECIAL GRADE", rawValue: "19", numValue: 19 },
-      { name: "Cursed sorcerer", className: "SPECIAL GRADE", rawValue: "17", numValue: 17 },
-      { name: "Overtime sorcerer awakened", className: "SPECIAL GRADE", rawValue: "16", numValue: 16 },
-      { name: "Curse manipulator", className: "SPECIAL GRADE", rawValue: "15", numValue: 15 },
-      { name: "Jackpot sorcerer", className: "SPECIAL GRADE", rawValue: "14", numValue: 14 },
+      { name: "Projection sorcerer", className: "SPECIAL GRADE", rawValue: "115", numValue: 115, trend: "UP", prevRaw: "105" },
+      { name: "Justice sorcerer", className: "SPECIAL GRADE", rawValue: "110", numValue: 110, trend: "FLAT", prevRaw: "110" },
+      { name: "King of Curses christmas", className: "SPECIAL GRADE", rawValue: "130", numValue: 130, trend: "UP", prevRaw: "120" },
+      { name: "Lighting sorcerer", className: "SPECIAL GRADE", rawValue: "55", numValue: 55, trend: "DOWN", prevRaw: "60" },
+      { name: "Strongest sorcerer", className: "SPECIAL GRADE", rawValue: "70", numValue: 70, trend: "FLAT", prevRaw: "70" },
+      { name: "Strongest sorcerer christmas", className: "SPECIAL GRADE", rawValue: "80", numValue: 80, trend: "UP", prevRaw: "75" },
+      { name: "Red scarf sorcerer awakened", className: "SPECIAL GRADE", rawValue: "50", numValue: 50, trend: "FLAT", prevRaw: "50" },
+      { name: "Strongest sorcerer zombie", className: "SPECIAL GRADE", rawValue: "35", numValue: 35, trend: "DOWN", prevRaw: "40" },
+      { name: "King of Curses", className: "SPECIAL GRADE", rawValue: "40", numValue: 40, trend: "FLAT", prevRaw: "40" },
+      { name: "Volcano curse", className: "SPECIAL GRADE", rawValue: "43", numValue: 43, trend: "UP", prevRaw: "40" },
+      { name: "Nature curse", className: "SPECIAL GRADE", rawValue: "39", numValue: 39, trend: "FLAT", prevRaw: "39" },
+      { name: "Ocean curse", className: "SPECIAL GRADE", rawValue: "37", numValue: 37, trend: "DOWN", prevRaw: "39" },
+      { name: "Sorcerer killer", className: "SPECIAL GRADE", rawValue: "23", numValue: 23, trend: "FLAT", prevRaw: "23" },
+      { name: "Soul curse awakened", className: "SPECIAL GRADE", rawValue: "21", numValue: 21, trend: "UP", prevRaw: "19" },
+      { name: "Mass sorcerer", className: "SPECIAL GRADE", rawValue: "19", numValue: 19, trend: "FLAT", prevRaw: "19" },
+      { name: "Cursed sorcerer", className: "SPECIAL GRADE", rawValue: "17", numValue: 17, trend: "FLAT", prevRaw: "17" },
+      { name: "Overtime sorcerer awakened", className: "SPECIAL GRADE", rawValue: "16", numValue: 16, trend: "UP", prevRaw: "15" },
+      { name: "Curse manipulator", className: "SPECIAL GRADE", rawValue: "15", numValue: 15, trend: "FLAT", prevRaw: "15" },
+      { name: "Jackpot sorcerer", className: "SPECIAL GRADE", rawValue: "14", numValue: 14, trend: "DOWN", prevRaw: "16" },
 
       // ANNIVERSARY
-      { name: "Cursed Sorcerer Wrangler", className: "ANNIVERSARY", rawValue: "150", numValue: 150 },
-      { name: "Shadow sorcerer party", className: "ANNIVERSARY", rawValue: "205", numValue: 205 },
-      { name: "Strongest sorcerer disco", className: "ANNIVERSARY", rawValue: "55", numValue: 55 },
-      { name: "Party cannon", className: "ANNIVERSARY", rawValue: "35", numValue: 35 },
+      { name: "Cursed Sorcerer Wrangler", className: "ANNIVERSARY", rawValue: "150", numValue: 150, trend: "UP", prevRaw: "140" },
+      { name: "Shadow sorcerer party", className: "ANNIVERSARY", rawValue: "205", numValue: 205, trend: "UP", prevRaw: "190" },
+      { name: "Strongest sorcerer disco", className: "ANNIVERSARY", rawValue: "55", numValue: 55, trend: "FLAT", prevRaw: "55" },
+      { name: "Party cannon", className: "ANNIVERSARY", rawValue: "35", numValue: 35, trend: "DOWN", prevRaw: "40" },
 
       // MYTHIC
-      { name: "Boogie Sorcerer Anniversary", className: "MYTHIC", rawValue: "5", numValue: 5 },
-      { name: "Dance Floor", className: "MYTHIC", rawValue: "10", numValue: 10 },
-      { name: "Candy Machine", className: "MYTHIC", rawValue: "865", numValue: 865 },
-      { name: "Explosive sorcerer", className: "MYTHIC", rawValue: "19", numValue: 19 },
-      { name: "Red scarf sorcerer summer", className: "MYTHIC", rawValue: "30.5K", numValue: 30500 },
-      { name: "Tree of Life", className: "MYTHIC", rawValue: "1,640", numValue: 1640 },
-      { name: "Harvester curse", className: "MYTHIC", rawValue: "2,225", numValue: 2225 },
-      { name: "Frost blossom", className: "MYTHIC", rawValue: "765", numValue: 765 },
-      { name: "Frames sorcerer", className: "MYTHIC", rawValue: "950", numValue: 950 },
-      { name: "Shadow sorcerer", className: "MYTHIC", rawValue: "275", numValue: 275 },
-      { name: "Kogane", className: "MYTHIC", rawValue: "940", numValue: 940 },
-      { name: "Gaze sorcerer", className: "MYTHIC", rawValue: "50", numValue: 50 },
-      { name: "Pinata", className: "MYTHIC", rawValue: "500", numValue: 500 },
-      { name: "Wealth sorcerer", className: "MYTHIC", rawValue: "275", numValue: 275 },
-      { name: "Mecha sorcerer christmas", className: "MYTHIC", rawValue: "30", numValue: 30 },
-      { name: "Blood curse", className: "MYTHIC", rawValue: "240", numValue: 240 },
-      { name: "Ice manipulator christmas", className: "MYTHIC", rawValue: "20", numValue: 20 },
-      { name: "Barrier sorcerer", className: "MYTHIC", rawValue: "15", numValue: 15 },
-      { name: "Soul curse", className: "MYTHIC", rawValue: "13", numValue: 13 },
-      { name: "Amplifying sorcerer", className: "MYTHIC", rawValue: "7", numValue: 7 },
-      { name: "Red scarf sorcerer anniversary", className: "MYTHIC", rawValue: "6", numValue: 6 },
-      { name: "Bow sorcerer awakened", className: "MYTHIC", rawValue: "6", numValue: 6 },
-      { name: "Guitar sorcerer dj", className: "MYTHIC", rawValue: "15", numValue: 15 },
-      { name: "Boogie sorcerer awakened", className: "MYTHIC", rawValue: "2", numValue: 2 },
-      { name: "Blood manipulator awakened", className: "MYTHIC", rawValue: "2", numValue: 2 },
-      { name: "Star sorcerer", className: "MYTHIC", rawValue: "1", numValue: 1 },
-      { name: "Overtime zombie", className: "MYTHIC", rawValue: "1", numValue: 1 },
-      { name: "Soul curse christmas", className: "MYTHIC", rawValue: "1", numValue: 1 },
-      { name: "Mask sorcerer", className: "MYTHIC", rawValue: "1", numValue: 1 },
-      { name: "Mecha sorcerer", className: "MYTHIC", rawValue: "1", numValue: 1 },
-      { name: "Overtime sorcerer", className: "MYTHIC", rawValue: "1", numValue: 1 },
-      { name: "Red scarf sorcerer", className: "MYTHIC", rawValue: "1", numValue: 1 },
+      { name: "Red scarf sorcerer summer", className: "MYTHIC", rawValue: "30.5K", numValue: 30500, trend: "UP", prevRaw: "29K" },
+      { name: "Harvester curse", className: "MYTHIC", rawValue: "2,225", numValue: 2225, trend: "UP", prevRaw: "2,100" },
+      { name: "Tree of Life", className: "MYTHIC", rawValue: "1,640", numValue: 1640, trend: "DOWN", prevRaw: "1,700" },
+      { name: "Frames sorcerer", className: "MYTHIC", rawValue: "950", numValue: 950, trend: "UP", prevRaw: "900" },
+      { name: "Kogane", className: "MYTHIC", rawValue: "940", numValue: 940, trend: "FLAT", prevRaw: "940" },
+      { name: "Candy Machine", className: "MYTHIC", rawValue: "865", numValue: 865, trend: "UP", prevRaw: "830" },
+      { name: "Frost blossom", className: "MYTHIC", rawValue: "765", numValue: 765, trend: "DOWN", prevRaw: "790" },
+      { name: "Pinata", className: "MYTHIC", rawValue: "500", numValue: 500, trend: "FLAT", prevRaw: "500" },
+      { name: "Shadow sorcerer", className: "MYTHIC", rawValue: "275", numValue: 275, trend: "UP", prevRaw: "260" },
+      { name: "Wealth sorcerer", className: "MYTHIC", rawValue: "275", numValue: 275, trend: "FLAT", prevRaw: "275" },
+      { name: "Blood curse", className: "MYTHIC", rawValue: "240", numValue: 240, trend: "DOWN", prevRaw: "255" },
+      { name: "Gaze sorcerer", className: "MYTHIC", rawValue: "50", numValue: 50, trend: "FLAT", prevRaw: "50" },
+      { name: "Mecha sorcerer christmas", className: "MYTHIC", rawValue: "30", numValue: 30, trend: "UP", prevRaw: "25" },
+      { name: "Ice manipulator christmas", className: "MYTHIC", rawValue: "20", numValue: 20, trend: "FLAT", prevRaw: "20" },
+      { name: "Explosive sorcerer", className: "MYTHIC", rawValue: "19", numValue: 19, trend: "FLAT", prevRaw: "19" },
+      { name: "Barrier sorcerer", className: "MYTHIC", rawValue: "15", numValue: 15, trend: "FLAT", prevRaw: "15" },
+      { name: "Guitar sorcerer dj", className: "MYTHIC", rawValue: "15", numValue: 15, trend: "UP", prevRaw: "12" },
+      { name: "Soul curse", className: "MYTHIC", rawValue: "13", numValue: 13, trend: "FLAT", prevRaw: "13" },
+      { name: "Dance Floor", className: "MYTHIC", rawValue: "10", numValue: 10, trend: "FLAT", prevRaw: "10" },
+      { name: "Amplifying sorcerer", className: "MYTHIC", rawValue: "7", numValue: 7, trend: "FLAT", prevRaw: "7" },
+      { name: "Red scarf sorcerer anniversary", className: "MYTHIC", rawValue: "6", numValue: 6, trend: "FLAT", prevRaw: "6" },
+      { name: "Bow sorcerer awakened", className: "MYTHIC", rawValue: "6", numValue: 6, trend: "FLAT", prevRaw: "6" },
+      { name: "Boogie Sorcerer Anniversary", className: "MYTHIC", rawValue: "5", numValue: 5, trend: "FLAT", prevRaw: "5" },
+      { name: "Boogie sorcerer awakened", className: "MYTHIC", rawValue: "2", numValue: 2, trend: "FLAT", prevRaw: "2" },
+      { name: "Blood manipulator awakened", className: "MYTHIC", rawValue: "2", numValue: 2, trend: "FLAT", prevRaw: "2" },
+      { name: "Star sorcerer", className: "MYTHIC", rawValue: "1", numValue: 1, trend: "FLAT", prevRaw: "1" },
+      { name: "Overtime zombie", className: "MYTHIC", rawValue: "1", numValue: 1, trend: "FLAT", prevRaw: "1" },
+      { name: "Soul curse christmas", className: "MYTHIC", rawValue: "1", numValue: 1, trend: "FLAT", prevRaw: "1" },
+      { name: "Mask sorcerer", className: "MYTHIC", rawValue: "1", numValue: 1, trend: "FLAT", prevRaw: "1" },
+      { name: "Mecha sorcerer", className: "MYTHIC", rawValue: "1", numValue: 1, trend: "FLAT", prevRaw: "1" },
+      { name: "Overtime sorcerer", className: "MYTHIC", rawValue: "1", numValue: 1, trend: "FLAT", prevRaw: "1" },
+      { name: "Red scarf sorcerer", className: "MYTHIC", rawValue: "1", numValue: 1, trend: "FLAT", prevRaw: "1" },
 
       // LEGENDARY
-      { name: "Claw sorcerer", className: "LEGENDARY", rawValue: "11", numValue: 11 },
-      { name: "Miracle sorcerer", className: "LEGENDARY", rawValue: "3,150", numValue: 3150 },
-      { name: "Discount sorcerer", className: "LEGENDARY", rawValue: "295", numValue: 295 },
-      { name: "Rope sorcerer", className: "LEGENDARY", rawValue: "405", numValue: 405 },
-      { name: "Slot machine", className: "LEGENDARY", rawValue: "85", numValue: 85 },
-      { name: "Helicopter sorcerer", className: "LEGENDARY", rawValue: "16", numValue: 16 },
-      { name: "Hand sorcerer", className: "LEGENDARY", rawValue: "13", numValue: 13 },
-      { name: "Paperbag sorcerer", className: "LEGENDARY", rawValue: "10", numValue: 10 },
-      { name: "Tough sorcerer", className: "LEGENDARY", rawValue: "10", numValue: 10 },
-      { name: "Pain killer", className: "LEGENDARY", rawValue: "10", numValue: 10 },
-      { name: "Ice manipulator", className: "LEGENDARY", rawValue: "8", numValue: 8 },
-      { name: "Cursed atm", className: "LEGENDARY", rawValue: "5", numValue: 5 },
-      { name: "Broom sorcerer witch", className: "LEGENDARY", rawValue: "8", numValue: 8 },
+      { name: "Miracle sorcerer", className: "LEGENDARY", rawValue: "3,150", numValue: 3150, trend: "UP", prevRaw: "3,000" },
+      { name: "Rope sorcerer", className: "LEGENDARY", rawValue: "405", numValue: 405, trend: "UP", prevRaw: "390" },
+      { name: "Discount sorcerer", className: "LEGENDARY", rawValue: "295", numValue: 295, trend: "DOWN", prevRaw: "310" },
+      { name: "Slot machine", className: "LEGENDARY", rawValue: "85", numValue: 85, trend: "FLAT", prevRaw: "85" },
+      { name: "Helicopter sorcerer", className: "LEGENDARY", rawValue: "16", numValue: 16, trend: "FLAT", prevRaw: "16" },
+      { name: "Hand sorcerer", className: "LEGENDARY", rawValue: "13", numValue: 13, trend: "FLAT", prevRaw: "13" },
+      { name: "Claw sorcerer", className: "LEGENDARY", rawValue: "11", numValue: 11, trend: "UP", prevRaw: "10" },
+      { name: "Paperbag sorcerer", className: "LEGENDARY", rawValue: "10", numValue: 10, trend: "FLAT", prevRaw: "10" },
+      { name: "Tough sorcerer", className: "LEGENDARY", rawValue: "10", numValue: 10, trend: "FLAT", prevRaw: "10" },
+      { name: "Pain killer", className: "LEGENDARY", rawValue: "10", numValue: 10, trend: "FLAT", prevRaw: "10" },
+      { name: "Ice manipulator", className: "LEGENDARY", rawValue: "8", numValue: 8, trend: "FLAT", prevRaw: "8" },
+      { name: "Broom sorcerer witch", className: "LEGENDARY", rawValue: "8", numValue: 8, trend: "FLAT", prevRaw: "8" },
+      { name: "Cursed atm", className: "LEGENDARY", rawValue: "5", numValue: 5, trend: "DOWN", prevRaw: "6" },
 
       // EPIC
-      { name: "Sorcerer agent", className: "EPIC", rawValue: "15", numValue: 15 },
-      { name: "Reverse energy sorcerer", className: "EPIC", rawValue: "10", numValue: 10 },
-      { name: "Sorcerer agent summer", className: "EPIC", rawValue: "10", numValue: 10 },
-      { name: "Sorcerer agent christmas", className: "EPIC", rawValue: "15", numValue: 15 }
+      { name: "Sorcerer agent", className: "EPIC", rawValue: "15", numValue: 15, trend: "UP", prevRaw: "12" },
+      { name: "Sorcerer agent christmas", className: "EPIC", rawValue: "15", numValue: 15, trend: "FLAT", prevRaw: "15" },
+      { name: "Reverse energy sorcerer", className: "EPIC", rawValue: "10", numValue: 10, trend: "FLAT", prevRaw: "10" },
+      { name: "Sorcerer agent summer", className: "EPIC", rawValue: "10", numValue: 10, trend: "DOWN", prevRaw: "12" }
     ];
 
-    let units = [];
+    let units = [...BASE_UNITS];
     let countdown = REFRESH_SECONDS;
 
     const gridEl = document.getElementById("grid");
@@ -247,30 +246,14 @@
       return parseFloat(clean) || 0;
     }
 
-    function loadHistory() {
-      try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-      } catch {
-        return {};
-      }
-    }
-
-    function saveHistory(map) {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(map));
-      } catch {}
-    }
-
     function parseSiteHTML(html) {
       const doc = new DOMParser().parseFromString(html, "text/html");
       const parsed = [];
       const seen = new Set();
 
-      const allBlocks = doc.querySelectorAll("div, article, section");
-      allBlocks.forEach((el) => {
+      doc.querySelectorAll("div, article, section").forEach((el) => {
         const text = el.innerText || "";
-        if (!text.includes("VALUE") || !text.includes("DEMAND")) return;
-        if (text.length > 350) return;
+        if (!text.includes("VALUE") || !text.includes("DEMAND") || text.length > 350) return;
 
         const lines = text.split("\n").map(l => l.trim()).filter(Boolean);
         const valIdx = lines.findIndex(l => l.toUpperCase() === "VALUE");
@@ -307,75 +290,54 @@
       return parsed;
     }
 
-    async function fetchFromSorcererValues() {
-      const proxies = [
-        `https://api.allorigins.win/get?url=${encodeURIComponent(TARGET_URL)}`,
-        `https://corsproxy.io/?${encodeURIComponent(TARGET_URL)}`
-      ];
-
-      for (const proxyUrl of proxies) {
-        try {
-          const res = await fetch(proxyUrl, { cache: "no-store" });
-          if (!res.ok) continue;
-          let html = "";
-          if (proxyUrl.includes("allorigins")) {
-            const json = await res.json();
-            html = json.contents || "";
-          } else {
-            html = await res.text();
-          }
-          const items = parseSiteHTML(html);
-          if (items.length >= 5) return items;
-        } catch {}
+    // Запрос с жёстким тайм-аутом 3 секунды, чтобы сайт НИКОГДА не зависал
+    async function fetchWithTimeout(url, ms = 3000) {
+      const ctrl = new AbortController();
+      const id = setTimeout(() => ctrl.abort(), ms);
+      try {
+        const res = await fetch(url, { signal: ctrl.signal, cache: "no-store" });
+        clearTimeout(id);
+        return res;
+      } catch (e) {
+        clearTimeout(id);
+        throw e;
       }
-      return null;
+    }
+
+    async function fetchFromSorcererValues() {
+      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(TARGET_URL)}`;
+      try {
+        const res = await fetchWithTimeout(proxyUrl, 3000);
+        if (!res.ok) return null;
+        const json = await res.json();
+        const items = parseSiteHTML(json.contents || "");
+        return items.length >= 5 ? items : null;
+      } catch {
+        return null;
+      }
     }
 
     async function syncValues() {
-      sourceEl.textContent = "Обновление с сайта...";
-      const history = loadHistory();
+      sourceEl.textContent = "Проверка обновлений...";
       const liveItems = await fetchFromSorcererValues();
 
-      let currentList = liveItems;
+      const now = new Date().toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+
       if (liveItems) {
-        sourceEl.textContent = `Live: sorcerer-td-values.com (${liveItems.length} шт.)`;
+        units = liveItems.map((item) => {
+          const prev = units.find(u => u.name === item.name);
+          const prevNum = prev ? prev.numValue : item.numValue;
+          const prevRaw = prev ? prev.rawValue : item.rawValue;
+          let trend = prev ? prev.trend : "FLAT";
+          if (item.numValue > prevNum) trend = "UP";
+          else if (item.numValue < prevNum) trend = "DOWN";
+          return { ...item, prevRaw, trend };
+        });
+        sourceEl.textContent = `Live-обновление (${now})`;
       } else {
-        sourceEl.textContent = `Актуальная база (${FALLBACK_UNITS.length} юнитов)`;
-        currentList = FALLBACK_UNITS;
+        sourceEl.textContent = `База STD активна (${now})`;
       }
 
-      const nextHistory = { ...history };
-
-      units = currentList.map((item) => {
-        const old = history[item.name];
-        let prevRaw = old ? old.rawValue : item.rawValue;
-        let prevNum = old ? old.numValue : item.numValue;
-        let trend = "FLAT";
-
-        if (old && item.numValue > prevNum) {
-          trend = "UP";
-        } else if (old && item.numValue < prevNum) {
-          trend = "DOWN";
-        } else if (old && old.trend && item.numValue === prevNum) {
-          trend = old.trend;
-          prevRaw = old.prevRaw || prevRaw;
-        }
-
-        nextHistory[item.name] = {
-          rawValue: item.rawValue,
-          numValue: item.numValue,
-          prevRaw,
-          trend
-        };
-
-        return {
-          ...item,
-          prevRaw,
-          trend
-        };
-      });
-
-      saveHistory(nextHistory);
       countdown = REFRESH_SECONDS;
       render();
     }
@@ -434,7 +396,10 @@
     trendEl.addEventListener("change", render);
     refreshBtn.addEventListener("click", syncValues);
 
+    // Сразу рисуем карточки без ожидания сети
+    render();
     syncValues();
+
     setInterval(() => {
       countdown -= 1;
       if (countdown <= 0) {
