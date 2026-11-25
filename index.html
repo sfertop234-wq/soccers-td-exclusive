@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SOCCERS TOWER DEFENS EXCLUSIVE — Цены, Роздачи, Коды и Админка</title>
+  <title>SOCCERS TOWER DEFENS EXCLUSIVE v1.0.8 — Цены, Трейды, Роздачи и Админка</title>
   <style>
     :root {
       --bg: #0b0f17;
@@ -26,7 +26,7 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     body { background: var(--bg); color: var(--text); padding: 16px 12px 56px; }
-    .container { max-width: 1080px; margin: 0 auto; }
+    .container { max-width: 1120px; margin: 0 auto; }
 
     header {
       background: var(--card); border: 1px solid var(--border); border-radius: 16px;
@@ -71,10 +71,15 @@
       background: var(--danger-bg); color: #fca5a5; border-color: rgba(220, 38, 38, 0.45);
       font-weight: 700; cursor: pointer; width: auto;
     }
+    button.fav-btn {
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--muted);
+      width: auto; padding: 4px 8px; border-radius: 8px; font-size: 0.85rem; cursor: pointer;
+    }
+    button.fav-btn.active { color: var(--gold); border-color: rgba(245, 158, 11, 0.45); background: rgba(245, 158, 11, 0.12); }
     button:active { transform: scale(0.98); }
 
-    .controls { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; margin-bottom: 16px; }
-    @media (max-width: 680px) { .controls { grid-template-columns: 1fr; } }
+    .controls { display: grid; grid-template-columns: 1fr auto auto auto; gap: 10px; margin-bottom: 16px; }
+    @media (max-width: 780px) { .controls { grid-template-columns: 1fr; } }
 
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 12px; }
 
@@ -92,6 +97,7 @@
     .badge.down { color: var(--down); background: var(--down-bg); }
     .badge.flat { color: var(--flat); background: var(--flat-bg); }
     .badge.creator { color: var(--gold); background: rgba(245, 158, 11, 0.16); border: 1px solid rgba(245, 158, 11, 0.35); }
+    .badge.active-code { color: #4ade80; background: rgba(22, 163, 74, 0.16); border: 1px solid rgba(22, 163, 74, 0.35); }
 
     .item-bottom {
       display: flex; justify-content: space-between; align-items: baseline;
@@ -100,15 +106,22 @@
     .value-price { font-size: 1.25rem; font-weight: 800; color: #60a5fa; }
     .prev-price { font-size: 0.78rem; color: var(--muted); }
 
-    .gw-form, .admin-box, .maint-card {
+    .gw-form, .admin-box, .maint-card, .trade-panel {
       background: var(--card); border: 1px solid var(--border); border-radius: 14px;
       padding: 16px; margin-bottom: 16px; display: grid; gap: 10px;
     }
-    .maint-card {
-      max-width: 520px; margin: 40px auto; border-color: rgba(245, 158, 11, 0.45);
+    .maint-card { max-width: 520px; margin: 40px auto; border-color: rgba(245, 158, 11, 0.45); }
+    .gw-row, .trade-cols { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .trade-cols { grid-template-columns: 1fr 1fr; }
+    @media (max-width: 680px) { .gw-row, .trade-cols { grid-template-columns: 1fr; } }
+
+    .trade-list { display: grid; gap: 6px; margin-top: 6px; }
+    .trade-chip {
+      display: flex; justify-content: space-between; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      border-radius: 10px; padding: 8px 10px; font-size: 0.85rem;
     }
-    .gw-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-    @media (max-width: 640px) { .gw-row { grid-template-columns: 1fr; } }
+
     .gw-meta { font-size: 0.82rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 10px; }
     .gw-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
     .creator-note { font-size: 0.8rem; color: var(--gold); }
@@ -144,9 +157,9 @@
   <div id="mainApp" class="container">
     <header>
       <div>
-        <div class="brand-tag">EXCLUSIVE</div>
+        <div class="brand-tag">EXCLUSIVE • v1.0.8</div>
         <h1>SOCCERS TOWER DEFENS exclusive</h1>
-        <p class="subtitle">Цены юнитов • Общие роздачи • Коды • Поддержка</p>
+        <p class="subtitle">Цены юнитов • Трейды • Роздачи • Коды • Поддержка</p>
       </div>
       <div class="header-pills">
         <div class="db-status">Онлайн: <strong id="onlineCountHeader" style="color:#4ade80;">1</strong></div>
@@ -156,9 +169,11 @@
 
     <div class="tabs">
       <button class="tab-btn active" data-tab="prices">Цены (<span id="unitsCount">0</span>)</button>
+      <button class="tab-btn" data-tab="trades">⚖️ Трейды</button>
       <button class="tab-btn" data-tab="giveaways">Роздачи (<span id="gwCount">0</span>)</button>
       <button class="tab-btn" data-tab="codes">Коды (<span id="codesCount">3</span>)</button>
       <button class="tab-btn" data-tab="creators"># Создатели</button>
+      <button class="tab-btn" data-tab="updates">📋 v1.0.8</button>
       <button class="tab-btn" data-tab="support">🆘 Поддержка</button>
       <button class="tab-btn admin-tab" data-tab="admin">🔐 Админка</button>
     </div>
@@ -182,8 +197,52 @@
           <option value="DOWN">Упала ▼</option>
           <option value="FLAT">Без изменений —</option>
         </select>
+        <button id="favFilterBtn" type="button" class="secondary-btn" style="width:100%;">☆ Избранные</button>
       </div>
       <div id="pricesGrid" class="grid"></div>
+    </section>
+
+    <!-- ВКЛАДКА ТРЕЙДОВ -->
+    <section id="tab-trades" class="hidden">
+      <div class="trade-panel">
+        <div style="font-weight:700;">Калькулятор обменов (Трейдов)</div>
+        <div class="subtitle">Добавь юнитов с обеих сторон, чтобы сравнить стоимость обмена.</div>
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="item-class">Отдаю</div>
+            <div class="stat-num" id="giveTotalDisplay" style="color:#60a5fa;">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="item-class">Получаю</div>
+            <div class="stat-num" id="getTotalDisplay" style="color:#4ade80;">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="item-class">Оценка сделки</div>
+            <div class="stat-num" id="tradeVerdictDisplay" style="font-size:1.05rem;">Равный обмен</div>
+          </div>
+        </div>
+        <div class="trade-cols">
+          <div class="admin-box" style="margin-bottom:0;">
+            <div style="font-weight:700;">Я отдаю</div>
+            <div style="display:flex; gap:8px;">
+              <select id="giveUnitSelect"></select>
+              <button id="addGiveBtn" type="button" class="action-btn">+</button>
+            </div>
+            <div id="giveList" class="trade-list"></div>
+          </div>
+          <div class="admin-box" style="margin-bottom:0;">
+            <div style="font-weight:700;">Я получаю</div>
+            <div style="display:flex; gap:8px;">
+              <select id="getUnitSelect"></select>
+              <button id="addGetBtn" type="button" class="action-btn">+</button>
+            </div>
+            <div id="getList" class="trade-list"></div>
+          </div>
+        </div>
+        <div>
+          <button id="clearTradeBtn" type="button" class="secondary-btn">Очистить трейд</button>
+        </div>
+      </div>
     </section>
 
     <!-- ВКЛАДКА РОЗДАЧ -->
@@ -211,6 +270,35 @@
       <div id="creatorsGrid" class="grid"></div>
     </section>
 
+    <!-- ВКЛАДКА ОБНОВЛЕНИЙ -->
+    <section id="tab-updates" class="hidden">
+      <div class="grid">
+        <article class="item-card">
+          <div>
+            <div class="item-class">АКТУАЛЬНАЯ ВЕРСИЯ</div>
+            <div class="item-name">Обновление v1.0.8</div>
+            <div class="subtitle" style="margin-top:8px;">
+              • Добавлен калькулятор трейдов с оценкой обмена.<br/>
+              • Добавлено избранное (★) на карточках цен.<br/>
+              • В коды добавлен статус активности, а к завершённым роздачам — копирование победителей.<br/>
+              • В админке появилось быстрое обновление цен юнитов.
+            </div>
+          </div>
+        </article>
+        <article class="item-card">
+          <div>
+            <div class="item-class">ПРЕДЫДУЩИЕ СБОРКИ</div>
+            <div class="item-name">v1.0.0 — v1.0.7</div>
+            <div class="subtitle" style="margin-top:8px;">
+              • База из 72 юнитов по 6 классам.<br/>
+              • Общие роздачи в реальном времени через Firebase.<br/>
+              • Панель создателя Рюи, техперерыв по паролю и обратная связь в поддержку.
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
     <!-- ВКЛАДКА ПОДДЕРЖКИ -->
     <section id="tab-support" class="hidden">
       <form id="supportForm" class="gw-form">
@@ -232,7 +320,7 @@
     <section id="tab-admin" class="hidden">
       <div id="adminLoginBox" class="admin-box">
         <div style="font-weight:700; color:var(--gold);">Вход в панель создателя (Рюи)</div>
-        <div class="subtitle">Введи пароль администратора, чтобы управлять сайтом, шансами и читать поддержку.</div>
+        <div class="subtitle">Введи пароль администратора, чтобы управлять сайтом, ценами, шансами и поддержкой.</div>
         <input id="adminPassInput" type="password" placeholder="Пароль администратора..." />
         <button id="adminLoginBtn" type="button" class="action-btn">Войти в админку</button>
       </div>
@@ -241,7 +329,7 @@
         <!-- ОБЩАЯ СТАТИСТИКА И ТЕХПЕРЕРЫВ -->
         <div class="admin-box">
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-            <strong style="color:var(--gold);">Панель управления Рюи</strong>
+            <strong style="color:var(--gold);">Панель управления Рюи (v1.0.8)</strong>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
               <button id="toggleMaintBtn" type="button" class="warn-btn">Включить техперерыв</button>
               <button id="adminLogoutBtn" type="button" class="secondary-btn">Выйти</button>
@@ -266,6 +354,15 @@
             <div class="item-class" style="margin-bottom:4px;">Кто сейчас на сайте:</div>
             <div id="adminOnlineList" class="subtitle">—</div>
           </div>
+        </div>
+
+        <!-- БЫСТРОЕ ИЗМЕНЕНИЕ ЦЕНЫ ЮНИТА -->
+        <div class="admin-box">
+          <div style="font-weight:700; color:#60a5fa;">💲 Обновить цену юнита (сохраняется в базе)</div>
+          <select id="editPriceUnitSelect"></select>
+          <input id="editPriceValueInput" type="text" placeholder="Новая цена (например: 125 или 32K)" />
+          <button id="savePriceBtn" type="button" class="action-btn">Сохранить цену</button>
+          <div id="priceSavedNote" class="ok-msg hidden">Цена обновлена у всех!</div>
         </div>
 
         <!-- СКРЫТАЯ НАКРУТКА ШАНСОВ НА РОЗЫГРЫШ -->
@@ -399,9 +496,9 @@
     ];
 
     const CODES = [
-      { code: "The2ndAnniversary", reward: "1,000 Anniversary Coins" },
-      { code: "PinataTowerDefence", reward: "2,000 Gems" },
-      { code: "SpinTheWheel", reward: "20 Anniversary Crystals" }
+      { code: "The2ndAnniversary", reward: "1,000 Anniversary Coins", status: "Активен" },
+      { code: "PinataTowerDefence", reward: "2,000 Gems", status: "Активен" },
+      { code: "SpinTheWheel", reward: "20 Anniversary Crystals", status: "Активен" }
     ];
 
     const CREATORS = [
@@ -414,6 +511,7 @@
 
     const USER_KEY = "std_exclusive_uid_v3";
     const NICK_KEY = "std_exclusive_nick_v3";
+    const FAV_KEY = "std_exclusive_favs_v1";
     const ADMIN_SESSION_KEY = "std_exclusive_admin_auth_v1";
 
     function getUserId() {
@@ -434,6 +532,10 @@
     }
 
     let units = [...DEFAULT_UNITS];
+    let favorites = JSON.parse(localStorage.getItem(FAV_KEY) || "[]");
+    let onlyFavs = false;
+    let giveItems = [];
+    let getItems = [];
     let giveaways = {};
     let onlineUsers = {};
     let supportTickets = {};
@@ -456,9 +558,7 @@
 
       const btn = document.getElementById("toggleMaintBtn");
       const label = document.getElementById("maintStatusLabel");
-      if (btn) {
-        btn.textContent = maintenanceEnabled ? "Выключить техперерыв" : "Включить техперерыв";
-      }
+      if (btn) btn.textContent = maintenanceEnabled ? "Выключить техперерыв" : "Включить техперерыв";
       if (label) {
         label.textContent = maintenanceEnabled ? "АКТИВЕН (остальные не видят сайт)" : "ВЫКЛЮЧЕН";
         label.style.color = maintenanceEnabled ? "#fbbf24" : "#4ade80";
@@ -472,6 +572,27 @@
       return parseFloat(clean) || 0;
     }
 
+    function populateUnitSelectors() {
+      const opts = units.map((u, idx) => `<option value="${idx}">${u.name} (${u.rawValue})</option>`).join("");
+      document.getElementById("giveUnitSelect").innerHTML = opts;
+      document.getElementById("getUnitSelect").innerHTML = opts;
+
+      const editSelect = document.getElementById("editPriceUnitSelect");
+      const prevIdx = editSelect.value || "0";
+      editSelect.innerHTML = opts;
+      if (units[prevIdx]) editSelect.value = prevIdx;
+    }
+
+    window.toggleFavorite = function(name) {
+      if (favorites.includes(name)) {
+        favorites = favorites.filter(x => x !== name);
+      } else {
+        favorites.push(name);
+      }
+      localStorage.setItem(FAV_KEY, JSON.stringify(favorites));
+      renderPrices();
+    };
+
     function renderPrices() {
       const q = document.getElementById("searchInput").value.trim().toLowerCase();
       const cls = document.getElementById("classFilter").value;
@@ -481,8 +602,10 @@
         const cur = parseNum(u.rawValue);
         const prev = parseNum(u.prevRaw);
         const trend = cur > prev ? "UP" : cur < prev ? "DOWN" : "FLAT";
-        return { ...u, trend };
+        const isFav = favorites.includes(u.name);
+        return { ...u, trend, isFav };
       }).filter(u => {
+        if (onlyFavs && !u.isFav) return false;
         if (q && !u.name.toLowerCase().includes(q)) return false;
         if (cls !== "ALL" && u.className !== cls) return false;
         if (trd !== "ALL" && u.trend !== trd) return false;
@@ -493,6 +616,7 @@
       document.getElementById("pricesGrid").innerHTML = list.map(u => {
         const badgeClass = u.trend === "UP" ? "up" : u.trend === "DOWN" ? "down" : "flat";
         const badgeText = u.trend === "UP" ? "▲ Поднялась" : u.trend === "DOWN" ? "▼ Упала" : "— Без изменений";
+        const safeName = u.name.replace(/'/g, "\\'");
         return `
           <article class="item-card">
             <div class="item-top">
@@ -500,7 +624,10 @@
                 <div class="item-class">${u.className}</div>
                 <div class="item-name">${u.name}</div>
               </div>
-              <span class="badge ${badgeClass}">${badgeText}</span>
+              <div style="display:flex; gap:6px; align-items:center;">
+                <button type="button" class="fav-btn ${u.isFav ? "active" : ""}" onclick="toggleFavorite('${safeName}')">${u.isFav ? "★" : "☆"}</button>
+                <span class="badge ${badgeClass}">${badgeText}</span>
+              </div>
             </div>
             <div class="item-bottom">
               <div class="value-price">${u.rawValue}</div>
@@ -511,7 +638,49 @@
       }).join("");
     }
 
-    // Взвешенный случайный выбор победителей (учитывает скрытую накрутку weights)
+    function renderTrades() {
+      const giveSum = giveItems.reduce((s, item) => s + parseNum(item.rawValue), 0);
+      const getSum = getItems.reduce((s, item) => s + parseNum(item.rawValue), 0);
+
+      document.getElementById("giveTotalDisplay").textContent = giveSum.toLocaleString("ru-RU");
+      document.getElementById("getTotalDisplay").textContent = getSum.toLocaleString("ru-RU");
+
+      const verdictEl = document.getElementById("tradeVerdictDisplay");
+      if (giveSum === 0 && getSum === 0) {
+        verdictEl.textContent = "Добавь юнитов";
+        verdictEl.style.color = "var(--muted)";
+      } else if (getSum > giveSum * 1.05) {
+        verdictEl.textContent = "Выгодный трейд (W)";
+        verdictEl.style.color = "#4ade80";
+      } else if (getSum < giveSum * 0.95) {
+        verdictEl.textContent = "В минус (L)";
+        verdictEl.style.color = "#f87171";
+      } else {
+        verdictEl.textContent = "Равный обмен (F)";
+        verdictEl.style.color = "var(--gold)";
+      }
+
+      document.getElementById("giveList").innerHTML = giveItems.map((u, i) => `
+        <div class="trade-chip">
+          <span>${u.name} (${u.rawValue})</span>
+          <button type="button" class="danger-btn" style="padding:4px 8px;" onclick="removeTradeItem('give', ${i})">×</button>
+        </div>
+      `).join("") || `<div class="subtitle">Пусто</div>`;
+
+      document.getElementById("getList").innerHTML = getItems.map((u, i) => `
+        <div class="trade-chip">
+          <span>${u.name} (${u.rawValue})</span>
+          <button type="button" class="danger-btn" style="padding:4px 8px;" onclick="removeTradeItem('get', ${i})">×</button>
+        </div>
+      `).join("") || `<div class="subtitle">Пусто</div>`;
+    }
+
+    window.removeTradeItem = function(side, idx) {
+      if (side === "give") giveItems.splice(idx, 1);
+      else getItems.splice(idx, 1);
+      renderTrades();
+    };
+
     function pickWinnersWeighted(participantsObj, weightsObj, count) {
       const pool = Object.entries(participantsObj || {}).map(([uid, nick]) => ({
         uid,
@@ -558,15 +727,24 @@
 
     async function syncFromCloud() {
       try {
-        const [gwData, onlineData, maintData, ticketsData] = await Promise.all([
+        const [gwData, onlineData, maintData, ticketsData, savedUnits] = await Promise.all([
           dbRequest("giveaways"),
           dbRequest("online"),
           dbRequest("settings/maintenance"),
-          dbRequest("support_tickets")
+          dbRequest("support_tickets"),
+          dbRequest("settings/units")
         ]);
         giveaways = gwData || {};
         supportTickets = ticketsData || {};
         maintenanceEnabled = Boolean(maintData);
+
+        if (Array.isArray(savedUnits) && savedUnits.length > 0) {
+          units = savedUnits;
+          populateUnitSelectors();
+          renderPrices();
+          renderTrades();
+        }
+
         applyMaintenanceGate();
 
         const now = Date.now();
@@ -577,8 +755,7 @@
           }
         }
         onlineUsers = activeOnline;
-        const onlineCount = Math.max(1, Object.keys(onlineUsers).length);
-        document.getElementById("onlineCountHeader").textContent = String(onlineCount);
+        document.getElementById("onlineCountHeader").textContent = String(Math.max(1, Object.keys(onlineUsers).length));
 
         for (const [id, gw] of Object.entries(giveaways)) {
           if (gw && !gw.finished && now >= gw.endsAt) {
@@ -598,6 +775,16 @@
       renderGiveaways();
       renderAdminPanel();
     }
+
+    window.copyWinners = function(id, btn) {
+      const gw = giveaways[id];
+      if (!gw || !Array.isArray(gw.winners) || !gw.winners.length) return;
+      const text = `Победители розыгрыша («${gw.text}»): ${gw.winners.join(", ")}`;
+      navigator.clipboard?.writeText(text).catch(() => {});
+      const prev = btn.textContent;
+      btn.textContent = "Скопировано!";
+      setTimeout(() => { btn.textContent = prev; }, 1200);
+    };
 
     function renderGiveaways() {
       const myId = getUserId();
@@ -624,7 +811,10 @@
         let actionBlock = "";
         if (gw.finished) {
           const wList = Array.isArray(gw.winners) && gw.winners.length ? gw.winners.join(", ") : "никто не участвовал";
-          actionBlock = `<div class="winners-box"><strong>Победители:</strong> ${wList}</div>`;
+          const copyBtn = Array.isArray(gw.winners) && gw.winners.length
+            ? `<button type="button" class="secondary-btn" onclick="copyWinners('${id}', this)">Скопировать победителей</button>`
+            : "";
+          actionBlock = `<div class="winners-box" style="width:100%;"><strong>Победители:</strong> ${wList}</div>${copyBtn}`;
         } else if (isCreator) {
           actionBlock = `<div class="creator-note">Вы создатель — участие недоступно</div>`;
         } else {
@@ -694,7 +884,6 @@
       const activeEntries = entries.filter(([, gw]) => !gw.finished);
       document.getElementById("adminActiveGw").textContent = String(activeEntries.length);
 
-      // Заполняем селект розыгрышей для скрытой накрутки (сохраняя текущий выбор)
       const rigGwSelect = document.getElementById("rigGwSelect");
       const prevGwVal = rigGwSelect.value;
       rigGwSelect.innerHTML = `<option value="">— Выбери активный розыгрыш —</option>` +
@@ -704,7 +893,6 @@
       }
       updateRigUsersDropdown();
 
-      // Тикеты поддержки
       const ticketEntries = Object.entries(supportTickets || {})
         .filter(([, t]) => t && t.message)
         .sort((a, b) => (b[1].createdAt || 0) - (a[1].createdAt || 0));
@@ -731,7 +919,6 @@
         }).join("");
       }
 
-      // Все розыгрыши в админке
       const adminGrid = document.getElementById("adminGwGrid");
       if (!entries.length) {
         adminGrid.innerHTML = `<div class="item-card"><div class="subtitle">Розыгрышей в базе нет.</div></div>`;
@@ -754,6 +941,25 @@
         `;
       }).join("");
     }
+
+    document.getElementById("savePriceBtn").addEventListener("click", async () => {
+      if (!isAdmin()) return;
+      const idx = parseInt(document.getElementById("editPriceUnitSelect").value, 10);
+      const newVal = document.getElementById("editPriceValueInput").value.trim();
+      if (!units[idx] || !newVal) return alert("Выбери юнита и введи новую цену!");
+
+      units[idx].prevRaw = units[idx].rawValue;
+      units[idx].rawValue = newVal;
+      await dbRequest("settings/units", "PUT", units);
+
+      document.getElementById("editPriceValueInput").value = "";
+      const note = document.getElementById("priceSavedNote");
+      note.classList.remove("hidden");
+      setTimeout(() => note.classList.add("hidden"), 2500);
+      populateUnitSelectors();
+      renderPrices();
+      renderTrades();
+    });
 
     document.getElementById("rigGwSelect").addEventListener("change", updateRigUsersDropdown);
 
@@ -894,13 +1100,45 @@
       renderAdminPanel();
     });
 
+    document.getElementById("favFilterBtn").addEventListener("click", (e) => {
+      onlyFavs = !onlyFavs;
+      e.target.textContent = onlyFavs ? "★ Только избранные" : "☆ Избранные";
+      e.target.classList.toggle("action-btn", onlyFavs);
+      renderPrices();
+    });
+
+    document.getElementById("addGiveBtn").addEventListener("click", () => {
+      const idx = parseInt(document.getElementById("giveUnitSelect").value, 10);
+      if (units[idx]) {
+        giveItems.push(units[idx]);
+        renderTrades();
+      }
+    });
+
+    document.getElementById("addGetBtn").addEventListener("click", () => {
+      const idx = parseInt(document.getElementById("getUnitSelect").value, 10);
+      if (units[idx]) {
+        getItems.push(units[idx]);
+        renderTrades();
+      }
+    });
+
+    document.getElementById("clearTradeBtn").addEventListener("click", () => {
+      giveItems = [];
+      getItems = [];
+      renderTrades();
+    });
+
     function renderCodes() {
       document.getElementById("codesCount").textContent = String(CODES.length);
       document.getElementById("codesGrid").innerHTML = CODES.map(c => `
         <article class="item-card">
           <div>
-            <div class="item-class">АКТИВНЫЙ КОД</div>
-            <div class="code-str">${c.code}</div>
+            <div class="item-top">
+              <div class="item-class">КОД ИЗ КАНАЛА</div>
+              <span class="badge active-code">${c.status}</span>
+            </div>
+            <div class="code-str" style="margin-top:6px;">${c.code}</div>
             <div class="subtitle" style="margin-top:6px;">Награда: ${c.reward}</div>
           </div>
           <button type="button" class="secondary-btn" onclick="copyCode('${c.code}', this)">Копировать код</button>
@@ -935,7 +1173,7 @@
         document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
         const tab = btn.dataset.tab;
-        ["prices", "giveaways", "codes", "creators", "support", "admin"].forEach(t => {
+        ["prices", "trades", "giveaways", "codes", "creators", "updates", "support", "admin"].forEach(t => {
           document.getElementById("tab-" + t).classList.toggle("hidden", t !== tab);
         });
       });
@@ -952,7 +1190,9 @@
       document.getElementById("supNick").value = savedNick;
     }
 
+    populateUnitSelectors();
     renderPrices();
+    renderTrades();
     renderCodes();
     renderCreators();
     sendHeartbeat();
