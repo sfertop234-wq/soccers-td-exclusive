@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SOCCERS TOWER DEFENS EXCLUSIVE v1.0.9 — Цены, Трейды, Роздачи и Админка</title>
+  <title>SOCCERS TOWER DEFENS EXCLUSIVE v1.1.0 — Цены, Трейды, Роздачи и Настройки</title>
   <style>
     :root {
       --bg: #0b0f17;
@@ -24,8 +24,34 @@
       --flat-bg: rgba(148, 163, 184, 0.14);
     }
 
+    body[data-theme="old"] {
+      --bg: #09090b;
+      --card: #141417;
+      --card-hover: #1c1c21;
+      --border: #2a2a32;
+      --text: #f4f4f5;
+      --muted: #a1a1aa;
+      --accent: #eab308;
+      --gold: #facc15;
+    }
+
+    body[data-theme="classic"] {
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --card-hover: #f8fafc;
+      --border: #cbd5e1;
+      --text: #0f172a;
+      --muted: #475569;
+      --accent: #2563eb;
+      --gold: #d97706;
+      --danger-bg: rgba(220, 38, 38, 0.12);
+      --up-bg: rgba(22, 163, 74, 0.12);
+      --down-bg: rgba(220, 38, 38, 0.12);
+      --flat-bg: rgba(100, 116, 139, 0.14);
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-    body { background: var(--bg); color: var(--text); padding: 16px 12px 56px; }
+    body { background: var(--bg); color: var(--text); padding: 16px 12px 56px; transition: background 0.2s, color 0.2s; }
     .container { max-width: 1140px; margin: 0 auto; }
 
     header {
@@ -33,15 +59,32 @@
       padding: 18px; margin-bottom: 12px; display: flex; flex-wrap: wrap;
       justify-content: space-between; align-items: center; gap: 14px;
     }
+    .profile-chip {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(127, 127, 127, 0.08); border: 1px solid var(--border);
+      padding: 6px 12px 6px 6px; border-radius: 999px; cursor: pointer;
+    }
+    .avatar-circle {
+      width: 34px; height: 34px; border-radius: 50%; object-fit: cover;
+      background: rgba(59, 130, 246, 0.2); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem;
+      overflow: hidden; flex-shrink: 0;
+    }
+    .avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
+
     .announce-bar {
       background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35);
       border-radius: 12px; padding: 10px 14px; margin-bottom: 14px;
-      font-size: 0.88rem; color: #dbeafe; display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+      font-size: 0.88rem; display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
     }
+    body[data-theme="classic"] .announce-bar { color: #1e3a8a; }
+    body:not([data-theme="classic"]) .announce-bar { color: #dbeafe; }
+
     .announce-tag {
       background: var(--accent); color: #fff; font-size: 0.7rem; font-weight: 800;
       padding: 2px 8px; border-radius: 6px; text-transform: uppercase;
     }
+    body[data-theme="old"] .announce-tag { color: #09090b; }
 
     .brand-tag {
       display: inline-block; background: rgba(245, 158, 11, 0.16); color: var(--gold);
@@ -55,15 +98,17 @@
     .header-pills { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
     .db-status {
       font-size: 0.78rem; padding: 6px 10px; border-radius: 999px;
-      background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--muted);
+      background: rgba(127,127,127,0.06); border: 1px solid var(--border); color: var(--muted);
     }
 
     .tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
     .tab-btn {
       background: var(--card); color: var(--muted); border: 1px solid var(--border);
       border-radius: 12px; padding: 10px 14px; font-weight: 700; cursor: pointer; font-size: 0.88rem;
+      width: auto;
     }
     .tab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    body[data-theme="old"] .tab-btn.active { color: #09090b; }
     .tab-btn.admin-tab { border-color: rgba(245, 158, 11, 0.4); color: var(--gold); }
     .tab-btn.admin-tab.active { background: var(--gold); color: #0b0f17; border-color: var(--gold); }
 
@@ -71,18 +116,19 @@
       background: var(--card); color: var(--text); border: 1px solid var(--border);
       border-radius: 10px; padding: 9px 12px; font-size: 0.9rem; outline: none; width: 100%;
     }
-    button.action-btn { background: var(--accent); border-color: var(--accent); font-weight: 700; cursor: pointer; width: auto; }
+    button.action-btn { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 700; cursor: pointer; width: auto; }
+    body[data-theme="old"] button.action-btn { color: #09090b; }
     button.warn-btn {
       background: rgba(245, 158, 11, 0.18); color: var(--gold); border-color: rgba(245, 158, 11, 0.45);
       font-weight: 700; cursor: pointer; width: auto;
     }
-    button.secondary-btn { background: rgba(255,255,255,0.06); border-color: var(--border); font-weight: 600; cursor: pointer; width: auto; }
+    button.secondary-btn { background: rgba(127,127,127,0.08); border-color: var(--border); font-weight: 600; cursor: pointer; width: auto; }
     button.danger-btn {
-      background: var(--danger-bg); color: #fca5a5; border-color: rgba(220, 38, 38, 0.45);
+      background: var(--danger-bg); color: #ef4444; border-color: rgba(220, 38, 38, 0.45);
       font-weight: 700; cursor: pointer; width: auto;
     }
     button.fav-btn {
-      background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--muted);
+      background: rgba(127,127,127,0.06); border: 1px solid var(--border); color: var(--muted);
       width: auto; padding: 4px 8px; border-radius: 8px; font-size: 0.85rem; cursor: pointer;
     }
     button.fav-btn.active { color: var(--gold); border-color: rgba(245, 158, 11, 0.45); background: rgba(245, 158, 11, 0.12); }
@@ -108,14 +154,14 @@
     .badge.down { color: var(--down); background: var(--down-bg); }
     .badge.flat { color: var(--flat); background: var(--flat-bg); }
     .badge.creator { color: var(--gold); background: rgba(245, 158, 11, 0.16); border: 1px solid rgba(245, 158, 11, 0.35); }
-    .badge.active-code { color: #4ade80; background: rgba(22, 163, 74, 0.16); border: 1px solid rgba(22, 163, 74, 0.35); }
-    .badge.expired-code { color: #f87171; background: rgba(220, 38, 38, 0.16); border: 1px solid rgba(220, 38, 38, 0.35); }
+    .badge.active-code { color: #16a34a; background: rgba(22, 163, 74, 0.16); border: 1px solid rgba(22, 163, 74, 0.35); }
+    .badge.expired-code { color: #dc2626; background: rgba(220, 38, 38, 0.16); border: 1px solid rgba(220, 38, 38, 0.35); }
 
     .item-bottom {
       display: flex; justify-content: space-between; align-items: baseline;
-      border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px;
+      border-top: 1px solid var(--border); padding-top: 10px;
     }
-    .value-price { font-size: 1.25rem; font-weight: 800; color: #60a5fa; }
+    .value-price { font-size: 1.25rem; font-weight: 800; color: var(--accent); }
     .prev-price { font-size: 0.78rem; color: var(--muted); }
 
     .gw-form, .admin-box, .maint-card, .trade-panel {
@@ -130,7 +176,7 @@
     .trade-list { display: grid; gap: 6px; margin-top: 6px; }
     .trade-chip {
       display: flex; justify-content: space-between; align-items: center; gap: 8px;
-      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      background: rgba(127,127,127,0.05); border: 1px solid var(--border);
       border-radius: 10px; padding: 8px 10px; font-size: 0.85rem;
     }
 
@@ -139,20 +185,51 @@
     .creator-note { font-size: 0.8rem; color: var(--gold); }
     .winners-box {
       background: rgba(22, 163, 74, 0.12); border: 1px solid rgba(22, 163, 74, 0.35);
-      color: #86efac; padding: 10px; border-radius: 10px; font-size: 0.85rem;
+      color: #16a34a; padding: 10px; border-radius: 10px; font-size: 0.85rem;
     }
+    body:not([data-theme="classic"]) .winners-box { color: #86efac; }
     .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 10px; }
     .stat-card {
-      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      background: rgba(127,127,127,0.05); border: 1px solid var(--border);
       border-radius: 12px; padding: 12px;
     }
     .stat-num { font-size: 1.45rem; font-weight: 800; color: var(--gold); margin-top: 4px; }
-    .code-str { font-family: monospace; font-size: 1.05rem; font-weight: 700; color: #fbbf24; }
-    .ok-msg { color: #4ade80; font-size: 0.85rem; font-weight: 600; }
+    .code-str { font-family: monospace; font-size: 1.05rem; font-weight: 700; color: var(--gold); }
+    .ok-msg { color: #16a34a; font-size: 0.85rem; font-weight: 600; }
+    body:not([data-theme="classic"]) .ok-msg { color: #4ade80; }
     .hidden { display: none; }
+
+    /* МОДАЛЬНОЕ ОКНО НАСТРОЕК */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.65);
+      display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 50;
+    }
+    .modal-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+      padding: 20px; width: 100%; max-width: 540px; max-height: 90vh; overflow-y: auto;
+      display: grid; gap: 14px;
+    }
+    .theme-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    @media (max-width: 480px) { .theme-grid { grid-template-columns: 1fr; } }
+    .theme-option {
+      border: 1px solid var(--border); border-radius: 10px; padding: 10px;
+      text-align: center; cursor: pointer; font-weight: 700; font-size: 0.85rem;
+      background: rgba(127,127,127,0.05); width: 100%;
+    }
+    .theme-option.active {
+      border-color: var(--accent); background: rgba(59, 130, 246, 0.16); color: var(--accent);
+    }
+    body[data-theme="old"] .theme-option.active {
+      border-color: var(--gold); background: rgba(234, 179, 8, 0.16); color: var(--gold);
+    }
+    .profile-preview {
+      display: flex; align-items: center; gap: 12px;
+      background: rgba(127,127,127,0.05); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px;
+    }
   </style>
 </head>
-<body>
+<body data-theme="new">
   <!-- ЭКРАН ТЕХПЕРЕРЫВА ДЛЯ ОБЫЧНЫХ УЧАСТНИКОВ -->
   <div id="maintenanceScreen" class="container hidden">
     <div class="maint-card">
@@ -169,20 +246,27 @@
   <div id="mainApp" class="container">
     <header>
       <div>
-        <div class="brand-tag">EXCLUSIVE • v1.0.9</div>
+        <div class="brand-tag">EXCLUSIVE • v1.1.0</div>
         <h1>SOCCERS TOWER DEFENS exclusive</h1>
-        <p class="subtitle">Цены юнитов • Трейды • Роздачи • Коды • Поддержка</p>
+        <p class="subtitle">Цены юнитов • Трейды • Роздачи • Коды • Настройки</p>
       </div>
       <div class="header-pills">
-        <button id="setNickBtn" type="button" class="secondary-btn" style="padding:6px 10px; font-size:0.78rem;">Ник: <span id="currentNickLabel">Гость</span></button>
-        <div class="db-status">Онлайн: <strong id="onlineCountHeader" style="color:#4ade80;">1</strong></div>
+        <div id="headerProfileBtn" class="profile-chip" title="Открыть настройки профиля">
+          <div id="headerAvatar" class="avatar-circle">Г</div>
+          <div>
+            <div id="currentNickLabel" style="font-size:0.84rem; font-weight:700;">Гость</div>
+            <div id="headerBioLabel" class="subtitle" style="font-size:0.72rem; max-width:160px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Без био</div>
+          </div>
+        </div>
+        <button id="openSettingsBtn" type="button" class="secondary-btn" style="padding:8px 12px; font-size:0.84rem;">⚙️ Настройки</button>
+        <div class="db-status">Онлайн: <strong id="onlineCountHeader" style="color:#16a34a;">1</strong></div>
         <div class="db-status">База: <strong id="dbStatusText" style="color:var(--text);">Подключение...</strong></div>
       </div>
     </header>
 
     <div id="announceBar" class="announce-bar">
       <span class="announce-tag">НОВОСТЬ ОТ РЮИ</span>
-      <span id="announceText">Добро пожаловать в обновление v1.0.9! Проверяйте калькулятор трейдов, списки «Есть / Ищу» и свежие коды.</span>
+      <span id="announceText">Добро пожаловать в обновление v1.1.0! Настройте дизайн и профиль в кнопке «Настройки» и проверяйте трейды.</span>
     </div>
 
     <div class="tabs">
@@ -191,7 +275,7 @@
       <button class="tab-btn" data-tab="giveaways">Роздачи (<span id="gwCount">0</span>)</button>
       <button class="tab-btn" data-tab="codes">Коды (<span id="codesCount">3</span>)</button>
       <button class="tab-btn" data-tab="creators"># Создатели</button>
-      <button class="tab-btn" data-tab="updates">📋 v1.0.9</button>
+      <button class="tab-btn" data-tab="updates">📋 v1.1.0</button>
       <button class="tab-btn" data-tab="support">🆘 Поддержка (<span id="supPublicBadge">0</span>)</button>
       <button class="tab-btn admin-tab" data-tab="admin">🔐 Админка</button>
     </div>
@@ -234,11 +318,11 @@
         <div class="stat-grid">
           <div class="stat-card">
             <div class="item-class">Отдаю</div>
-            <div class="stat-num" id="giveTotalDisplay" style="color:#60a5fa;">0</div>
+            <div class="stat-num" id="giveTotalDisplay" style="color:var(--accent);">0</div>
           </div>
           <div class="stat-card">
             <div class="item-class">Получаю</div>
-            <div class="stat-num" id="getTotalDisplay" style="color:#4ade80;">0</div>
+            <div class="stat-num" id="getTotalDisplay" style="color:#16a34a;">0</div>
           </div>
           <div class="stat-card">
             <div class="item-class">Оценка сделки</div>
@@ -270,7 +354,7 @@
 
       <div class="trade-cols">
         <div class="admin-box">
-          <div style="font-weight:700; color:#4ade80;">✅ Мой список «Есть»</div>
+          <div style="font-weight:700; color:#16a34a;">✅ Мой список «Есть»</div>
           <div style="display:flex; gap:8px;">
             <select id="haveUnitSelect"></select>
             <button id="addHaveBtn" type="button" class="action-btn">Добавить</button>
@@ -278,7 +362,7 @@
           <div id="haveList" class="trade-list"></div>
         </div>
         <div class="admin-box">
-          <div style="font-weight:700; color:#fbbf24;">🔎 Мой список «Ищу»</div>
+          <div style="font-weight:700; color:var(--gold);">🔎 Мой список «Ищу»</div>
           <div style="display:flex; gap:8px;">
             <select id="wantUnitSelect"></select>
             <button id="addWantBtn" type="button" class="warn-btn">Добавить</button>
@@ -319,22 +403,20 @@
         <article class="item-card">
           <div>
             <div class="item-class">АКТУАЛЬНАЯ ВЕРСИЯ</div>
-            <div class="item-name">Обновление v1.0.9</div>
+            <div class="item-name">Обновление v1.1.0</div>
             <div class="subtitle" style="margin-top:8px;">
-              • Добавлен баннер объявлений от создателя Рюи.<br/>
-              • Добавлено сохранение ника игрока и сортировка цен.<br/>
-              • В трейды добавлены списки «Есть» и «Ищу».<br/>
-              • В админку добавлено управление кодами и новостью дня.
+              • Добавлена кнопка «⚙️ Настройки» с выбором дизайна (Новый, Старый, Классический).<br/>
+              • Добавлена настройка аккаунта: имя/ник, фото/аватар и био.<br/>
+              • Исправлен калькулятор трейдов и сохранены списки «Есть / Ищу».
             </div>
           </div>
         </article>
         <article class="item-card">
           <div>
-            <div class="item-class">ОБНОВЛЕНИЕ v1.0.8</div>
-            <div class="item-name">Трейды, Избранное и Цены</div>
+            <div class="item-class">ОБНОВЛЕНИЕ v1.0.9</div>
+            <div class="item-name">Объявления, Коды и Списки</div>
             <div class="subtitle" style="margin-top:8px;">
-              • Калькулятор обменов с оценкой сделки.<br/>
-              • Избранное (★), копирование победителей и редактирование цен в админке.
+              • Баннер новостей от Рюи, списки «Есть / Ищу» и управление кодами в админке.
             </div>
           </div>
         </article>
@@ -368,10 +450,9 @@
       </div>
 
       <div id="adminPanelBox" class="hidden">
-        <!-- ОБЩАЯ СТАТИСТИКА И ТЕХПЕРЕРЫВ -->
         <div class="admin-box">
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-            <strong style="color:var(--gold);">Панель управления Рюи (v1.0.9)</strong>
+            <strong style="color:var(--gold);">Панель управления Рюи (v1.1.0)</strong>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
               <button id="toggleMaintBtn" type="button" class="warn-btn">Включить техперерыв</button>
               <button id="adminLogoutBtn" type="button" class="secondary-btn">Выйти</button>
@@ -398,35 +479,31 @@
           </div>
         </div>
 
-        <!-- ОБЪЯВЛЕНИЕ / НОВОСТЬ ДНЯ -->
         <div class="admin-box">
-          <div style="font-weight:700; color:#60a5fa;">📢 Объявление на главной странице</div>
+          <div style="font-weight:700; color:var(--accent);">📢 Объявление на главной странице</div>
           <input id="adminAnnounceInput" type="text" placeholder="Текст объявления для всех игроков..." />
           <button id="saveAnnounceBtn" type="button" class="action-btn">Обновить объявление</button>
           <div id="announceSavedNote" class="ok-msg hidden">Объявление сохранено!</div>
         </div>
 
-        <!-- БЫСТРОЕ ИЗМЕНЕНИЕ ЦЕНЫ ЮНИТА -->
         <div class="admin-box">
-          <div style="font-weight:700; color:#60a5fa;">💲 Обновить цену юнита (сохраняется в базе)</div>
+          <div style="font-weight:700; color:var(--accent);">💲 Обновить цену юнита (сохраняется в базе)</div>
           <select id="editPriceUnitSelect"></select>
           <input id="editPriceValueInput" type="text" placeholder="Новая цена (например: 125 или 32K)" />
           <button id="savePriceBtn" type="button" class="action-btn">Сохранить цену</button>
           <div id="priceSavedNote" class="ok-msg hidden">Цена обновлена у всех!</div>
         </div>
 
-        <!-- УПРАВЛЕНИЕ КОДАМИ -->
         <div class="admin-box">
-          <div style="font-weight:700; color:#fbbf24;">🎟️ Добавить код в раздел «Коды»</div>
+          <div style="font-weight:700; color:var(--gold);">🎟️ Добавить код в раздел «Коды»</div>
           <div class="gw-row">
-            <input id="newCodeStr" type="text" placeholder="Код (например: NewUpdate109)" />
+            <input id="newCodeStr" type="text" placeholder="Код (например: NewUpdate110)" />
             <input id="newCodeReward" type="text" placeholder="Награда (например: 5,000 Gems)" />
             <button id="addCodeBtn" type="button" class="action-btn">Добавить код</button>
           </div>
           <div id="adminCodesList" class="trade-list"></div>
         </div>
 
-        <!-- СКРЫТАЯ НАКРУТКА ШАНСОВ НА РОЗЫГРЫШ -->
         <div class="admin-box" style="border-color: rgba(245, 158, 11, 0.4);">
           <div style="font-weight:700; color:var(--gold);">🎯 Накрутить шансы на розыгрыш (скрыто от всех)</div>
           <div class="subtitle">Выбери активный розыгрыш и участника, которому нужно повысить шанс победы. Никто кроме тебя это не увидит.</div>
@@ -447,15 +524,63 @@
           <div id="rigStatusNote" class="ok-msg hidden">Настройки шансов сохранены скрытно!</div>
         </div>
 
-        <!-- СООБЩЕНИЯ ИЗ ПОДДЕРЖКИ -->
         <div style="font-weight:700; margin-bottom:10px;">📩 Сообщения из поддержки (баги и вопросы):</div>
         <div id="adminTicketsGrid" class="grid" style="margin-bottom:20px;"></div>
 
-        <!-- УПРАВЛЕНИЕ ВСЕМИ РОЗЫГРЫШАМИ -->
         <div style="font-weight:700; margin-bottom:10px;">🎁 Все розыгрыши (удаление любого розыгрыша):</div>
         <div id="adminGwGrid" class="grid"></div>
       </div>
     </section>
+  </div>
+
+  <!-- МОДАЛЬНОЕ ОКНО НАСТРОЕК (ДИЗАЙН + АККАУНТ) -->
+  <div id="settingsModal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="font-size:1.15rem;">⚙️ Настройки сайта и аккаунта</h2>
+        <button id="closeSettingsBtn" type="button" class="secondary-btn" style="padding:6px 10px;">✕</button>
+      </div>
+
+      <div>
+        <div class="item-class" style="margin-bottom:6px;">ДИЗАЙН САЙТА</div>
+        <div class="theme-grid">
+          <button type="button" class="theme-option active" data-theme-choice="new">✨ Новый</button>
+          <button type="button" class="theme-option" data-theme-choice="old">🕰️ Старый</button>
+          <button type="button" class="theme-option" data-theme-choice="classic">📄 Классический</button>
+        </div>
+      </div>
+
+      <div class="profile-preview">
+        <div id="previewAvatar" class="avatar-circle" style="width:48px; height:48px;">Г</div>
+        <div>
+          <div id="previewName" style="font-weight:700;">Гость</div>
+          <div id="previewBio" class="subtitle" style="font-size:0.8rem;">Без био</div>
+        </div>
+      </div>
+
+      <div style="display:grid; gap:10px;">
+        <div class="item-class">НАСТРОЙКИ АККАУНТА</div>
+        <div>
+          <label class="subtitle" style="display:block; margin-bottom:4px;">Имя / Ник</label>
+          <input id="accNameInput" type="text" maxlength="32" placeholder="Введите имя или ник..." />
+        </div>
+        <div>
+          <label class="subtitle" style="display:block; margin-bottom:4px;">Фото / Аватар (ссылка или загрузить файл)</label>
+          <input id="accAvatarInput" type="text" placeholder="https://... или выберите файл ниже" />
+          <input id="accAvatarFile" type="file" accept="image/*" style="margin-top:6px; padding:6px;" />
+        </div>
+        <div>
+          <label class="subtitle" style="display:block; margin-bottom:4px;">Био</label>
+          <textarea id="accBioInput" rows="2" maxlength="140" placeholder="Коротко о себе или любимые юниты..."></textarea>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:10px; justify-content:flex-end;">
+        <button id="cancelSettingsBtn" type="button" class="secondary-btn">Закрыть</button>
+        <button id="saveSettingsBtn" type="button" class="action-btn">Сохранить настройки</button>
+      </div>
+      <div id="settingsSavedNote" class="ok-msg hidden">Настройки сохранены!</div>
+    </div>
   </div>
 
   <script>
@@ -572,6 +697,9 @@
 
     const USER_KEY = "std_exclusive_uid_v3";
     const NICK_KEY = "std_exclusive_nick_v3";
+    const AVATAR_KEY = "std_exclusive_avatar_v1";
+    const BIO_KEY = "std_exclusive_bio_v1";
+    const THEME_KEY = "std_exclusive_theme_v1";
     const FAV_KEY = "std_exclusive_favs_v1";
     const HAVE_KEY = "std_exclusive_have_v1";
     const WANT_KEY = "std_exclusive_want_v1";
@@ -590,13 +718,66 @@
       return localStorage.getItem(NICK_KEY) || ("Гость#" + getUserId().slice(-4).toUpperCase());
     }
 
-    function syncNickUI() {
+    function renderAvatarEl(el, name, avatarUrl) {
+      if (!el) return;
+      if (avatarUrl && avatarUrl.trim()) {
+        el.innerHTML = `<img src="${avatarUrl.trim()}" alt="${name}" onerror="this.remove(); this.parentElement.textContent='${(name || "Г").slice(0,1).toUpperCase()}';" />`;
+      } else {
+        el.textContent = (name || "Г").slice(0, 1).toUpperCase();
+      }
+    }
+
+    function syncProfileUI() {
       const nick = localStorage.getItem(NICK_KEY) || "";
-      document.getElementById("currentNickLabel").textContent = nick || "Гость";
+      const bio = localStorage.getItem(BIO_KEY) || "";
+      const avatar = localStorage.getItem(AVATAR_KEY) || "";
+      const displayName = nick || "Гость";
+
+      document.getElementById("currentNickLabel").textContent = displayName;
+      document.getElementById("headerBioLabel").textContent = bio || "Без био";
+      renderAvatarEl(document.getElementById("headerAvatar"), displayName, avatar);
+
       if (nick) {
         document.getElementById("gwAuthor").value = nick;
         document.getElementById("supNick").value = nick;
       }
+    }
+
+    function applyTheme(themeName) {
+      const valid = ["new", "old", "classic"].includes(themeName) ? themeName : "new";
+      document.body.setAttribute("data-theme", valid);
+      localStorage.setItem(THEME_KEY, valid);
+      document.querySelectorAll(".theme-option").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.themeChoice === valid);
+      });
+    }
+
+    let draftTheme = localStorage.getItem(THEME_KEY) || "new";
+
+    function updateModalPreview() {
+      const name = document.getElementById("accNameInput").value.trim() || "Гость";
+      const bio = document.getElementById("accBioInput").value.trim() || "Без био";
+      const avatar = document.getElementById("accAvatarInput").value.trim();
+      document.getElementById("previewName").textContent = name;
+      document.getElementById("previewBio").textContent = bio;
+      renderAvatarEl(document.getElementById("previewAvatar"), name, avatar);
+    }
+
+    function openSettingsModal() {
+      draftTheme = localStorage.getItem(THEME_KEY) || "new";
+      document.getElementById("accNameInput").value = localStorage.getItem(NICK_KEY) || "";
+      document.getElementById("accAvatarInput").value = localStorage.getItem(AVATAR_KEY) || "";
+      document.getElementById("accBioInput").value = localStorage.getItem(BIO_KEY) || "";
+      document.querySelectorAll(".theme-option").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.themeChoice === draftTheme);
+      });
+      updateModalPreview();
+      document.getElementById("settingsModal").classList.remove("hidden");
+    }
+
+    function closeSettingsModal() {
+      applyTheme(localStorage.getItem(THEME_KEY) || "new");
+      document.getElementById("settingsModal").classList.add("hidden");
     }
 
     function isAdmin() {
@@ -605,7 +786,7 @@
 
     let units = [...DEFAULT_UNITS];
     let codes = [...DEFAULT_CODES];
-    let announcement = "Добро пожаловать в обновление v1.0.9! Проверяйте калькулятор трейдов, списки «Есть / Ищу» и свежие коды.";
+    let announcement = "Добро пожаловать в обновление v1.1.0! Настройте дизайн и профиль в кнопке «Настройки» и проверяйте трейды.";
     let favorites = JSON.parse(localStorage.getItem(FAV_KEY) || "[]");
     let haveList = JSON.parse(localStorage.getItem(HAVE_KEY) || "[]");
     let wantList = JSON.parse(localStorage.getItem(WANT_KEY) || "[]");
@@ -637,7 +818,7 @@
       if (btn) btn.textContent = maintenanceEnabled ? "Выключить техперерыв" : "Включить техперерыв";
       if (label) {
         label.textContent = maintenanceEnabled ? "АКТИВЕН (остальные не видят сайт)" : "ВЫКЛЮЧЕН";
-        label.style.color = maintenanceEnabled ? "#fbbf24" : "#4ade80";
+        label.style.color = maintenanceEnabled ? "#eab308" : "#16a34a";
       }
     }
 
@@ -652,7 +833,11 @@
       const opts = units.map((u, idx) => `<option value="${idx}">${u.name} (${u.rawValue})</option>`).join("");
       ["giveUnitSelect", "getUnitSelect", "haveUnitSelect", "wantUnitSelect"].forEach(id => {
         const el = document.getElementById(id);
-        if (el) el.innerHTML = opts;
+        if (el) {
+          const prev = el.value;
+          el.innerHTML = opts;
+          if (prev && units[prev]) el.value = prev;
+        }
       });
 
       const editSelect = document.getElementById("editPriceUnitSelect");
@@ -748,12 +933,19 @@
       renderHaveWantLists();
     };
 
+    function formatShortNum(num) {
+      if (!num) return "0";
+      if (num >= 1000000) return (num / 1000000).toFixed(2).replace(/\.?0+$/, "") + "M (" + num.toLocaleString("ru-RU") + ")";
+      if (num >= 1000) return (num / 1000).toFixed(2).replace(/\.?0+$/, "") + "K (" + num.toLocaleString("ru-RU") + ")";
+      return num.toLocaleString("ru-RU");
+    }
+
     function renderTrades() {
       const giveSum = giveItems.reduce((s, item) => s + parseNum(item.rawValue), 0);
       const getSum = getItems.reduce((s, item) => s + parseNum(item.rawValue), 0);
 
-      document.getElementById("giveTotalDisplay").textContent = giveSum.toLocaleString("ru-RU");
-      document.getElementById("getTotalDisplay").textContent = getSum.toLocaleString("ru-RU");
+      document.getElementById("giveTotalDisplay").textContent = formatShortNum(giveSum);
+      document.getElementById("getTotalDisplay").textContent = formatShortNum(getSum);
 
       const verdictEl = document.getElementById("tradeVerdictDisplay");
       if (giveSum === 0 && getSum === 0) {
@@ -761,10 +953,10 @@
         verdictEl.style.color = "var(--muted)";
       } else if (getSum > giveSum * 1.05) {
         verdictEl.textContent = "Выгодный трейд (W)";
-        verdictEl.style.color = "#4ade80";
+        verdictEl.style.color = "#16a34a";
       } else if (getSum < giveSum * 0.95) {
         verdictEl.textContent = "В минус (L)";
-        verdictEl.style.color = "#f87171";
+        verdictEl.style.color = "#dc2626";
       } else {
         verdictEl.textContent = "Равный обмен (F)";
         verdictEl.style.color = "var(--gold)";
@@ -1098,14 +1290,53 @@
       }).join("");
     }
 
-    document.getElementById("setNickBtn").addEventListener("click", () => {
-      const current = localStorage.getItem(NICK_KEY) || "";
-      const next = prompt("Введи свой ник в Discord:", current);
-      if (next !== null) {
-        localStorage.setItem(NICK_KEY, next.trim());
-        syncNickUI();
-        sendHeartbeat();
-      }
+    // СОБЫТИЯ НАСТРОЕК И АККАУНТА
+    document.getElementById("openSettingsBtn").addEventListener("click", openSettingsModal);
+    document.getElementById("headerProfileBtn").addEventListener("click", openSettingsModal);
+    document.getElementById("closeSettingsBtn").addEventListener("click", closeSettingsModal);
+    document.getElementById("cancelSettingsBtn").addEventListener("click", closeSettingsModal);
+
+    document.querySelectorAll(".theme-option").forEach(btn => {
+      btn.addEventListener("click", () => {
+        draftTheme = btn.dataset.themeChoice;
+        document.querySelectorAll(".theme-option").forEach(b => b.classList.toggle("active", b === btn));
+        document.body.setAttribute("data-theme", draftTheme);
+      });
+    });
+
+    ["accNameInput", "accAvatarInput", "accBioInput"].forEach(id => {
+      document.getElementById(id).addEventListener("input", updateModalPreview);
+    });
+
+    document.getElementById("accAvatarFile").addEventListener("change", (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        document.getElementById("accAvatarInput").value = String(reader.result || "");
+        updateModalPreview();
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById("saveSettingsBtn").addEventListener("click", () => {
+      const nextName = document.getElementById("accNameInput").value.trim();
+      const nextAvatar = document.getElementById("accAvatarInput").value.trim();
+      const nextBio = document.getElementById("accBioInput").value.trim();
+
+      localStorage.setItem(NICK_KEY, nextName);
+      localStorage.setItem(AVATAR_KEY, nextAvatar);
+      localStorage.setItem(BIO_KEY, nextBio);
+      applyTheme(draftTheme);
+      syncProfileUI();
+      sendHeartbeat();
+
+      const note = document.getElementById("settingsSavedNote");
+      note.classList.remove("hidden");
+      setTimeout(() => {
+        note.classList.add("hidden");
+        document.getElementById("settingsModal").classList.add("hidden");
+      }, 600);
     });
 
     document.getElementById("saveAnnounceBtn").addEventListener("click", async () => {
@@ -1187,7 +1418,7 @@
         if (!nick) {
           nick = prompt("Введи свой ник в Discord для участия:") || getUserNick();
           localStorage.setItem(NICK_KEY, nick.trim());
-          syncNickUI();
+          syncProfileUI();
         }
         await dbRequest(`giveaways/${id}/participants/${myId}`, "PUT", nick.trim());
       }
@@ -1212,7 +1443,7 @@
       if (!author || !text) return;
 
       localStorage.setItem(NICK_KEY, author);
-      syncNickUI();
+      syncProfileUI();
 
       const id = "gw_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6);
       const payload = {
@@ -1241,7 +1472,7 @@
       if (!nick || !message) return;
 
       localStorage.setItem(NICK_KEY, nick);
-      syncNickUI();
+      syncProfileUI();
       const tid = "t_" + Date.now() + "_" + Math.random().toString(36).slice(2, 5);
       await dbRequest(`support_tickets/${tid}`, "PUT", {
         nick,
@@ -1303,24 +1534,24 @@
 
     document.getElementById("addGiveBtn").addEventListener("click", () => {
       const idx = parseInt(document.getElementById("giveUnitSelect").value, 10);
-      if (units[idx]) {
-        giveItems.push(units[idx]);
+      if (!Number.isNaN(idx) && units[idx]) {
+        giveItems.push({ ...units[idx] });
         renderTrades();
       }
     });
 
     document.getElementById("addGetBtn").addEventListener("click", () => {
       const idx = parseInt(document.getElementById("getUnitSelect").value, 10);
-      if (units[idx]) {
-        getItems.push(units[idx]);
+      if (!Number.isNaN(idx) && units[idx]) {
+        getItems.push({ ...units[idx] });
         renderTrades();
       }
     });
 
     document.getElementById("addHaveBtn").addEventListener("click", () => {
       const idx = parseInt(document.getElementById("haveUnitSelect").value, 10);
-      if (units[idx]) {
-        haveList.push(units[idx]);
+      if (!Number.isNaN(idx) && units[idx]) {
+        haveList.push({ ...units[idx] });
         localStorage.setItem(HAVE_KEY, JSON.stringify(haveList));
         renderHaveWantLists();
       }
@@ -1328,8 +1559,8 @@
 
     document.getElementById("addWantBtn").addEventListener("click", () => {
       const idx = parseInt(document.getElementById("wantUnitSelect").value, 10);
-      if (units[idx]) {
-        wantList.push(units[idx]);
+      if (!Number.isNaN(idx) && units[idx]) {
+        wantList.push({ ...units[idx] });
         localStorage.setItem(WANT_KEY, JSON.stringify(wantList));
         renderHaveWantLists();
       }
@@ -1399,7 +1630,8 @@
       document.getElementById(id).addEventListener("change", renderPrices);
     });
 
-    syncNickUI();
+    applyTheme(localStorage.getItem(THEME_KEY) || "new");
+    syncProfileUI();
     populateUnitSelectors();
     renderPrices();
     renderTrades();
