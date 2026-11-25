@@ -407,7 +407,7 @@
             <div class="subtitle" style="margin-top:8px;">
               • Добавлена кнопка «⚙️ Настройки» с выбором дизайна (Новый, Старый, Классический).<br/>
               • Добавлена настройка аккаунта: имя/ник, фото/аватар и био.<br/>
-              • Исправлен калькулятор трейдов и сохранены списки «Есть / Ищу».
+              • Проверка пароля админки переведена на SHA-256 хеш.
             </div>
           </div>
         </article>
@@ -588,7 +588,13 @@
 
   <script>
     const FIREBASE_DB_URL = "https://soccers-td-db-default-rtdb.europe-west1.firebasedatabase.app";
-    const ADMIN_PASSWORD = "rodrod123123";
+    const ADMIN_PASSWORD_SHA256 = "0712485284c047147c0767070941277041c24c4a216f33300d484d9f16c8d306";
+
+    async function sha256Hex(text) {
+      const data = new TextEncoder().encode(text);
+      const digest = await crypto.subtle.digest("SHA-256", data);
+      return [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2, "0")).join("");
+    }
 
     const DEFAULT_UNITS = [
       { name: "Bad The Anniversary Trait", className: "ASCENDED", rawValue: "320", prevRaw: "300" },
@@ -1303,6 +1309,12 @@
       if (e.target === settingsModal) closeSettingsModal();
     });
 
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !settingsModal.classList.contains("hidden")) {
+        closeSettingsModal();
+      }
+    });
+
     document.querySelectorAll(".theme-option").forEach(btn => {
       btn.addEventListener("click", () => {
         draftTheme = btn.dataset.themeChoice;
@@ -1505,9 +1517,10 @@
       await syncFromCloud();
     });
 
-    function handleAdminPasswordLogin(inputEl) {
+    async function handleAdminPasswordLogin(inputEl) {
       const pass = inputEl.value.trim();
-      if (pass === ADMIN_PASSWORD) {
+      const hash = await sha256Hex(pass);
+      if (hash === ADMIN_PASSWORD_SHA256) {
         sessionStorage.setItem(ADMIN_SESSION_KEY, "1");
         inputEl.value = "";
         applyMaintenanceGate();
