@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SOCCERS TOWER DEFENS EXCLUSIVE — Цены, Роздачи и Коды</title>
+  <title>SOCCERS TOWER DEFENS EXCLUSIVE — Цены, Роздачи, Коды и Создатели</title>
   <style>
     :root {
       --bg: #0b0f17;
@@ -14,6 +14,8 @@
       --muted: #8b9bb4;
       --accent: #3b82f6;
       --gold: #f59e0b;
+      --danger: #dc2626;
+      --danger-bg: rgba(220, 38, 38, 0.16);
       --up: #16a34a;
       --up-bg: rgba(22, 163, 74, 0.16);
       --down: #dc2626;
@@ -40,26 +42,27 @@
     h1 { font-size: 1.35rem; margin-bottom: 4px; }
     .subtitle { color: var(--muted); font-size: 0.85rem; }
 
-    .tabs {
-      display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;
+    .db-status {
+      font-size: 0.78rem; padding: 6px 10px; border-radius: 999px;
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--muted);
     }
+
+    .tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
     .tab-btn {
       background: var(--card); color: var(--muted); border: 1px solid var(--border);
       border-radius: 12px; padding: 10px 16px; font-weight: 700; cursor: pointer;
     }
-    .tab-btn.active {
-      background: var(--accent); color: #fff; border-color: var(--accent);
-    }
+    .tab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
     button, select, input, textarea {
       background: var(--card); color: var(--text); border: 1px solid var(--border);
       border-radius: 10px; padding: 9px 12px; font-size: 0.9rem; outline: none; width: 100%;
     }
-    button.action-btn {
-      background: var(--accent); border-color: var(--accent); font-weight: 700; cursor: pointer; width: auto;
-    }
-    button.secondary-btn {
-      background: rgba(255,255,255,0.06); border-color: var(--border); font-weight: 600; cursor: pointer; width: auto;
+    button.action-btn { background: var(--accent); border-color: var(--accent); font-weight: 700; cursor: pointer; width: auto; }
+    button.secondary-btn { background: rgba(255,255,255,0.06); border-color: var(--border); font-weight: 600; cursor: pointer; width: auto; }
+    button.danger-btn {
+      background: var(--danger-bg); color: #fca5a5; border-color: rgba(220, 38, 38, 0.45);
+      font-weight: 700; cursor: pointer; width: auto;
     }
     button:active { transform: scale(0.98); }
 
@@ -81,6 +84,7 @@
     .badge.up { color: var(--up); background: var(--up-bg); }
     .badge.down { color: var(--down); background: var(--down-bg); }
     .badge.flat { color: var(--flat); background: var(--flat-bg); }
+    .badge.creator { color: var(--gold); background: rgba(245, 158, 11, 0.16); border: 1px solid rgba(245, 158, 11, 0.35); }
 
     .item-bottom {
       display: flex; justify-content: space-between; align-items: baseline;
@@ -96,6 +100,8 @@
     .gw-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
     @media (max-width: 640px) { .gw-row { grid-template-columns: 1fr; } }
     .gw-meta { font-size: 0.82rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 10px; }
+    .gw-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .creator-note { font-size: 0.8rem; color: var(--gold); }
     .winners-box {
       background: rgba(22, 163, 74, 0.12); border: 1px solid rgba(22, 163, 74, 0.35);
       color: #86efac; padding: 10px; border-radius: 10px; font-size: 0.85rem;
@@ -110,15 +116,16 @@
       <div>
         <div class="brand-tag">EXCLUSIVE</div>
         <h1>SOCCERS TOWER DEFENS exclusive</h1>
-        <p class="subtitle">Цены юнитов • Роздачи • Актуальные коды</p>
+        <p class="subtitle">Цены юнитов • Общие роздачи • Коды • Создатели</p>
       </div>
-      <div style="font-size:0.82rem; color:var(--muted);">Обновлено: <strong id="clock" style="color:var(--text);">--:--</strong></div>
+      <div class="db-status">База: <strong id="dbStatusText" style="color:var(--text);">Подключение...</strong></div>
     </header>
 
     <div class="tabs">
       <button class="tab-btn active" data-tab="prices">Цены</button>
       <button class="tab-btn" data-tab="giveaways">Роздачи (<span id="gwCount">0</span>)</button>
       <button class="tab-btn" data-tab="codes">Коды (<span id="codesCount">3</span>)</button>
+      <button class="tab-btn" data-tab="creators"># Создатели</button>
     </div>
 
     <!-- ВКЛАДКА ЦЕН -->
@@ -147,9 +154,9 @@
     <!-- ВКЛАДКА РОЗДАЧ -->
     <section id="tab-giveaways" class="hidden">
       <form id="gwForm" class="gw-form">
-        <div style="font-weight:700;">Создать роздачу (доступно всем)</div>
-        <input id="gwAuthor" type="text" placeholder="Твой ник в Discord (например: sfertop234)" required />
-        <textarea id="gwText" rows="2" placeholder="Текст роздачи и приз (например: Раздаю юнита за подписку и активность!)" required></textarea>
+        <div style="font-weight:700;">Создать общую роздачу (видят все участники)</div>
+        <input id="gwAuthor" type="text" placeholder="Твой ник в Discord (например: Рюи / sfertop234)" required />
+        <textarea id="gwText" rows="2" placeholder="Текст роздачи и приз (например: Раздаю юнита!)" required></textarea>
         <div class="gw-row">
           <input id="gwMinutes" type="number" min="1" max="1440" value="5" placeholder="Время (мин)" required />
           <input id="gwWinners" type="number" min="1" max="50" value="1" placeholder="Победителей" required />
@@ -163,10 +170,17 @@
     <section id="tab-codes" class="hidden">
       <div id="codesGrid" class="grid"></div>
     </section>
+
+    <!-- ВКЛАДКА СОЗДАТЕЛЕЙ -->
+    <section id="tab-creators" class="hidden">
+      <div id="creatorsGrid" class="grid"></div>
+    </section>
   </div>
 
   <script>
-    const UNITS = [
+    const FIREBASE_DB_URL = "https://soccers-td-db-default-rtdb.europe-west1.firebasedatabase.app";
+
+    const DEFAULT_UNITS = [
       { name: "Cursed Sorcerer Wrangler", className: "ANNIVERSARY", rawValue: "110", prevRaw: "150" },
       { name: "Shadow sorcerer party", className: "ANNIVERSARY", rawValue: "205", prevRaw: "190" },
       { name: "Strongest sorcerer disco", className: "ANNIVERSARY", rawValue: "55", prevRaw: "55" },
@@ -180,22 +194,41 @@
       { code: "SpinTheWheel", reward: "20 Anniversary Crystals" }
     ];
 
-    const GW_KEY = "std_exclusive_giveaways_v1";
-    const USER_KEY = "std_exclusive_participant_id_v1";
+    const CREATORS = [
+      {
+        name: "Рюи",
+        role: "СОЗДАТЕЛЬ САЙТА",
+        desc: "Основатель проекта SOCCERS TOWER DEFENS exclusive, роздач, кодов и Discord-сообщества."
+      }
+    ];
+
+    const USER_KEY = "std_exclusive_uid_v3";
+    const NICK_KEY = "std_exclusive_nick_v3";
 
     function getUserId() {
       let id = localStorage.getItem(USER_KEY);
       if (!id) {
-        id = "Участник#" + Math.floor(1000 + Math.random() * 9000);
+        id = "u_" + Math.random().toString(36).slice(2, 10);
         localStorage.setItem(USER_KEY, id);
       }
       return id;
     }
 
-    let giveaways = JSON.parse(localStorage.getItem(GW_KEY) || "[]");
-    function saveGiveaways() {
-      localStorage.setItem(GW_KEY, JSON.stringify(giveaways));
-      document.getElementById("gwCount").textContent = String(giveaways.length);
+    function getUserNick() {
+      return localStorage.getItem(NICK_KEY) || ("Игрок#" + getUserId().slice(-4).toUpperCase());
+    }
+
+    let units = [...DEFAULT_UNITS];
+    let giveaways = {};
+    const dbStatusEl = document.getElementById("dbStatusText");
+
+    async function dbRequest(path, method = "GET", body = null) {
+      const base = FIREBASE_DB_URL.replace(/\/+$/, "");
+      const opts = { method, headers: { "Content-Type": "application/json" } };
+      if (body !== null) opts.body = JSON.stringify(body);
+      const res = await fetch(`${base}/${path}.json`, opts);
+      if (!res.ok) throw new Error("DB Error");
+      return res.json();
     }
 
     function parseNum(str) {
@@ -210,7 +243,7 @@
       const cls = document.getElementById("classFilter").value;
       const trd = document.getElementById("trendFilter").value;
 
-      const list = UNITS.map(u => {
+      const list = units.map(u => {
         const cur = parseNum(u.rawValue);
         const prev = parseNum(u.prevRaw);
         const trend = cur > prev ? "UP" : cur < prev ? "DOWN" : "FLAT";
@@ -243,28 +276,15 @@
       }).join("");
     }
 
-    function pickWinners(participants, count) {
-      const pool = [...participants];
+    function pickWinners(participantsObj, count) {
+      const entries = Object.values(participantsObj || {});
       const winners = [];
-      const n = Math.min(count, pool.length);
+      const n = Math.min(count, entries.length);
       for (let i = 0; i < n; i++) {
-        const idx = Math.floor(Math.random() * pool.length);
-        winners.push(pool.splice(idx, 1)[0]);
+        const idx = Math.floor(Math.random() * entries.length);
+        winners.push(entries.splice(idx, 1)[0]);
       }
       return winners;
-    }
-
-    function tickGiveaways() {
-      const now = Date.now();
-      let changed = false;
-      giveaways.forEach(gw => {
-        if (!gw.finished && now >= gw.endsAt) {
-          gw.finished = true;
-          gw.winners = pickWinners(gw.participants, gw.winnersCount);
-          changed = true;
-        }
-      });
-      if (changed) saveGiveaways();
     }
 
     function formatLeft(ms) {
@@ -275,18 +295,65 @@
       return `${m}м ${String(s).padStart(2, "0")}с`;
     }
 
+    async function syncFromCloud() {
+      try {
+        const data = await dbRequest("giveaways");
+        giveaways = data || {};
+
+        const now = Date.now();
+        for (const [id, gw] of Object.entries(giveaways)) {
+          if (gw && !gw.finished && now >= gw.endsAt) {
+            const winners = pickWinners(gw.participants, gw.winnersCount);
+            gw.finished = true;
+            gw.winners = winners;
+            await dbRequest(`giveaways/${id}`, "PATCH", { finished: true, winners });
+          }
+        }
+
+        const time = new Date().toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+        dbStatusEl.textContent = `Онлайн (${time})`;
+      } catch {
+        dbStatusEl.textContent = "Ошибка правил БД";
+      }
+
+      renderGiveaways();
+    }
+
     function renderGiveaways() {
-      tickGiveaways();
       const myId = getUserId();
+      const entries = Object.entries(giveaways || {})
+        .filter(([, gw]) => gw && gw.text)
+        .sort((a, b) => (b[1].createdAt || 0) - (a[1].createdAt || 0));
+
+      document.getElementById("gwCount").textContent = String(entries.length);
       const grid = document.getElementById("gwGrid");
-      if (!giveaways.length) {
-        grid.innerHTML = `<div class="item-card"><div class="subtitle">Пока нет роздач. Создай первую выше!</div></div>`;
+
+      if (!entries.length) {
+        grid.innerHTML = `<div class="item-card"><div class="subtitle">Пока нет активных роздач. Создай первую выше!</div></div>`;
         return;
       }
 
-      grid.innerHTML = giveaways.map(gw => {
-        const joined = gw.participants.includes(myId);
+      grid.innerHTML = entries.map(([id, gw]) => {
+        const isCreator = gw.creatorId === myId;
+        const participants = gw.participants || {};
+        const joined = Boolean(participants[myId]);
+        const count = Object.keys(participants).length;
         const leftText = gw.finished ? "Завершена" : `Осталось: ${formatLeft(gw.endsAt - Date.now())}`;
+
+        let actionBlock = "";
+        if (gw.finished) {
+          const wList = Array.isArray(gw.winners) && gw.winners.length ? gw.winners.join(", ") : "никто не участвовал";
+          actionBlock = `<div class="winners-box"><strong>Победители:</strong> ${wList}</div>`;
+        } else if (isCreator) {
+          actionBlock = `<div class="creator-note">Вы создатель — участие недоступно</div>`;
+        } else {
+          actionBlock = `<button type="button" class="${joined ? "secondary-btn" : "action-btn"}" onclick="toggleJoin('${id}')">${joined ? "Выйти из участия" : "Участвовать"}</button>`;
+        }
+
+        const deleteBtn = isCreator
+          ? `<button type="button" class="danger-btn" onclick="deleteGiveaway('${id}')">Удалить</button>`
+          : "";
+
         return `
           <article class="item-card">
             <div>
@@ -295,51 +362,71 @@
             </div>
             <div class="gw-meta">
               <span>Победителей: <strong>${gw.winnersCount}</strong></span>
-              <span>Участников: <strong>${gw.participants.length}</strong></span>
+              <span>Участников: <strong>${count}</strong></span>
             </div>
-            ${gw.finished
-              ? `<div class="winners-box"><strong>Победители:</strong> ${gw.winners.length ? gw.winners.join(", ") : "никто не участвовал"}</div>`
-              : `<button type="button" class="${joined ? "secondary-btn" : "action-btn"}" onclick="toggleJoin('${gw.id}')">${joined ? "Выйти из участия" : "Участвовать"}</button>`
-            }
+            <div class="gw-actions">
+              ${actionBlock}
+              ${deleteBtn}
+            </div>
           </article>
         `;
       }).join("");
     }
 
-    window.toggleJoin = function(id) {
+    window.toggleJoin = async function(id) {
       const myId = getUserId();
-      const gw = giveaways.find(g => g.id === id);
-      if (!gw || gw.finished) return;
-      if (gw.participants.includes(myId)) {
-        gw.participants = gw.participants.filter(x => x !== myId);
+      const gw = giveaways[id];
+      if (!gw || gw.finished || gw.creatorId === myId) return;
+
+      const participants = gw.participants || {};
+      if (participants[myId]) {
+        await dbRequest(`giveaways/${id}/participants/${myId}`, "DELETE");
       } else {
-        gw.participants.push(myId);
+        let nick = localStorage.getItem(NICK_KEY);
+        if (!nick) {
+          nick = prompt("Введи свой ник в Discord для участия:") || getUserNick();
+          localStorage.setItem(NICK_KEY, nick.trim());
+        }
+        await dbRequest(`giveaways/${id}/participants/${myId}`, "PUT", nick.trim());
       }
-      saveGiveaways();
-      renderGiveaways();
+      await syncFromCloud();
     };
 
-    document.getElementById("gwForm").addEventListener("submit", (e) => {
+    window.deleteGiveaway = async function(id) {
+      const myId = getUserId();
+      const gw = giveaways[id];
+      if (!gw || gw.creatorId !== myId) return;
+      await dbRequest(`giveaways/${id}`, "DELETE");
+      await syncFromCloud();
+    };
+
+    document.getElementById("gwForm").addEventListener("submit", async (e) => {
       e.preventDefault();
+
       const author = document.getElementById("gwAuthor").value.trim();
       const text = document.getElementById("gwText").value.trim();
       const minutes = Math.max(1, parseInt(document.getElementById("gwMinutes").value, 10) || 5);
       const winnersCount = Math.max(1, parseInt(document.getElementById("gwWinners").value, 10) || 1);
       if (!author || !text) return;
 
-      giveaways.unshift({
-        id: "gw_" + Date.now(),
+      localStorage.setItem(NICK_KEY, author);
+
+      const id = "gw_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6);
+      const payload = {
+        creatorId: getUserId(),
         author,
         text,
         winnersCount,
+        createdAt: Date.now(),
         endsAt: Date.now() + minutes * 60000,
-        participants: [],
+        participants: {},
         winners: [],
         finished: false
-      });
-      saveGiveaways();
+      };
+
+      await dbRequest(`giveaways/${id}`, "PUT", payload);
       document.getElementById("gwText").value = "";
-      renderGiveaways();
+      await syncFromCloud();
     });
 
     function renderCodes() {
@@ -356,6 +443,21 @@
       `).join("");
     }
 
+    function renderCreators() {
+      document.getElementById("creatorsGrid").innerHTML = CREATORS.map(cr => `
+        <article class="item-card">
+          <div class="item-top">
+            <div>
+              <div class="item-class">КАНАЛ СОЗДАТЕЛЕЙ</div>
+              <div class="item-name">${cr.name}</div>
+            </div>
+            <span class="badge creator">${cr.role}</span>
+          </div>
+          <div class="subtitle" style="margin-top:6px;">${cr.desc}</div>
+        </article>
+      `).join("");
+    }
+
     window.copyCode = function(code, btn) {
       navigator.clipboard?.writeText(code).catch(() => {});
       const prev = btn.textContent;
@@ -368,7 +470,7 @@
         document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
         const tab = btn.dataset.tab;
-        ["prices", "giveaways", "codes"].forEach(t => {
+        ["prices", "giveaways", "codes", "creators"].forEach(t => {
           document.getElementById("tab-" + t).classList.toggle("hidden", t !== tab);
         });
       });
@@ -379,19 +481,16 @@
       document.getElementById(id).addEventListener("change", renderPrices);
     });
 
-    saveGiveaways();
-    renderPrices();
-    renderGiveaways();
-    renderCodes();
+    const savedNick = localStorage.getItem(NICK_KEY);
+    if (savedNick) document.getElementById("gwAuthor").value = savedNick;
 
-    setInterval(() => {
-      document.getElementById("clock").textContent = new Date().toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-      if (!document.getElementById("tab-giveaways").classList.contains("hidden")) {
-        renderGiveaways();
-      } else {
-        tickGiveaways();
-      }
-    }, 1000);
+    renderPrices();
+    renderCodes();
+    renderCreators();
+    syncFromCloud();
+
+    setInterval(renderGiveaways, 1000);
+    setInterval(syncFromCloud, 5000);
   </script>
 </body>
 </html>
