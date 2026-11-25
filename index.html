@@ -199,7 +199,6 @@
     body:not([data-theme="classic"]) .ok-msg { color: #4ade80; }
     .hidden { display: none !important; }
 
-    /* МОДАЛЬНОЕ ОКНО НАСТРОЕК */
     .modal-backdrop {
       position: fixed; inset: 0; background: rgba(0, 0, 0, 0.72);
       display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 999;
@@ -236,8 +235,10 @@
       <div class="brand-tag">ТЕХПЕРЕРЫВ • РЮИ</div>
       <h2>Сайт временно на техперерыве</h2>
       <p class="subtitle">Обновляем данные и проверяем систему. Для остальных участников доступ временно закрыт.</p>
-      <button id="maintGoogleLoginBtn" type="button" class="action-btn" style="margin-top:8px;">Войти через Google (sfertop234@gmail.com)</button>
-      <div id="maintAuthStatus" class="subtitle" style="margin-top:4px; color:#ef4444;"></div>
+      <input id="maintEmailInput" type="email" value="sfertop234@gmail.com" placeholder="Email администратора..." />
+      <input id="maintPassInput" type="password" placeholder="Пароль администратора..." />
+      <button id="maintEmailLoginBtn" type="button" class="action-btn">Войти для проверки</button>
+      <div id="maintAuthStatus" class="subtitle" style="color:#ef4444;"></div>
     </div>
   </div>
 
@@ -404,18 +405,9 @@
             <div class="item-class">АКТУАЛЬНАЯ ВЕРСИЯ</div>
             <div class="item-name">Обновление v1.1.0</div>
             <div class="subtitle" style="margin-top:8px;">
-              • Вход в админку через Google-аккаунт (sfertop234@gmail.com) без паролей в коде.<br/>
+              • Вход в админку по email и паролю через Firebase Authentication.<br/>
               • Кнопка «⚙️ Настройки» с темами (Новый, Старый, Классический) и настройкой аккаунта.<br/>
               • Калькулятор трейдов и списки «Есть / Ищу».
-            </div>
-          </div>
-        </article>
-        <article class="item-card">
-          <div>
-            <div class="item-class">ОБНОВЛЕНИЕ v1.0.9</div>
-            <div class="item-name">Объявления, Коды и Списки</div>
-            <div class="subtitle" style="margin-top:8px;">
-              • Баннер новостей от Рюи, списки «Есть / Ищу» и управление кодами в админке.
             </div>
           </div>
         </article>
@@ -442,9 +434,11 @@
     <!-- АДМИН-ПАНЕЛЬ -->
     <section id="tab-admin" class="hidden">
       <div id="adminLoginBox" class="admin-box">
-        <div style="font-weight:700; color:var(--gold);">Вход в панель создателя через Google</div>
-        <div class="subtitle">Доступ к админке разрешён только для аккаунта <strong>sfertop234@gmail.com</strong>.</div>
-        <button id="adminGoogleLoginBtn" type="button" class="action-btn">Войти через Google</button>
+        <div style="font-weight:700; color:var(--gold);">Вход в панель создателя (Email и пароль)</div>
+        <div class="subtitle">Введите почту <strong>sfertop234@gmail.com</strong> и ваш пароль администратора из Firebase.</div>
+        <input id="adminEmailInput" type="email" value="sfertop234@gmail.com" placeholder="Email администратора..." />
+        <input id="adminPassInput" type="password" placeholder="Пароль администратора..." />
+        <button id="adminEmailLoginBtn" type="button" class="action-btn">Войти в админку</button>
         <div id="adminAuthError" class="subtitle" style="color:#ef4444;"></div>
       </div>
 
@@ -457,7 +451,7 @@
             </div>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
               <button id="toggleMaintBtn" type="button" class="warn-btn">Включить техперерыв</button>
-              <button id="adminLogoutBtn" type="button" class="secondary-btn">Выйти из Google</button>
+              <button id="adminLogoutBtn" type="button" class="secondary-btn">Выйти</button>
             </div>
           </div>
           <div class="subtitle">Режим техперерыва для остальных: <strong id="maintStatusLabel" style="color:var(--text);">ВЫКЛЮЧЕН</strong></div>
@@ -590,7 +584,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 
     const FIREBASE_DB_URL = "https://soccers-td-db-default-rtdb.europe-west1.firebasedatabase.app";
     const ADMIN_EMAIL = "sfertop234@gmail.com";
@@ -608,7 +602,6 @@
 
     const app = initializeApp(FIREBASE_CONFIG);
     const auth = getAuth(app);
-    const googleProvider = new GoogleAuthProvider();
 
     let currentFirebaseUser = null;
 
@@ -1331,31 +1324,42 @@
       }).join("");
     }
 
-    async function triggerGoogleAdminLogin(statusTargetEl) {
+    async function triggerEmailAdminLogin(emailInput, passInput, statusTargetEl) {
+      const email = (emailInput?.value || "").trim();
+      const pass = (passInput?.value || "").trim();
+      if (!email || !pass) {
+        if (statusTargetEl) statusTargetEl.textContent = "Введите email и пароль!";
+        return;
+      }
+      if (email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+        if (statusTargetEl) statusTargetEl.textContent = `Вход разрешён только для почты ${ADMIN_EMAIL}.`;
+        return;
+      }
       try {
         if (statusTargetEl) statusTargetEl.textContent = "";
-        const cred = await signInWithPopup(auth, googleProvider);
-        const email = (cred.user?.email || "").toLowerCase();
-        if (email !== ADMIN_EMAIL.toLowerCase()) {
-          await signOut(auth);
-          if (statusTargetEl) {
-            statusTargetEl.textContent = `Вошёл аккаунт ${email}, но админка доступна только для ${ADMIN_EMAIL}.`;
-          }
-          return;
-        }
+        await signInWithEmailAndPassword(auth, email, pass);
+        if (passInput) passInput.value = "";
       } catch (err) {
         if (statusTargetEl) {
-          statusTargetEl.textContent = "Ошибка входа через Google: " + (err?.message || "проверь настройки Firebase Auth и Authorized domains");
+          statusTargetEl.textContent = "Ошибка входа: проверьте пароль и включён ли Email/Password в Firebase Auth.";
         }
       }
     }
 
-    document.getElementById("adminGoogleLoginBtn").addEventListener("click", () => {
-      triggerGoogleAdminLogin(document.getElementById("adminAuthError"));
+    document.getElementById("adminEmailLoginBtn").addEventListener("click", () => {
+      triggerEmailAdminLogin(
+        document.getElementById("adminEmailInput"),
+        document.getElementById("adminPassInput"),
+        document.getElementById("adminAuthError")
+      );
     });
 
-    document.getElementById("maintGoogleLoginBtn").addEventListener("click", () => {
-      triggerGoogleAdminLogin(document.getElementById("maintAuthStatus"));
+    document.getElementById("maintEmailLoginBtn").addEventListener("click", () => {
+      triggerEmailAdminLogin(
+        document.getElementById("maintEmailInput"),
+        document.getElementById("maintPassInput"),
+        document.getElementById("maintAuthStatus")
+      );
     });
 
     document.getElementById("adminLogoutBtn").addEventListener("click", async () => {
@@ -1719,4 +1723,3 @@
   </script>
 </body>
 </html>
-
