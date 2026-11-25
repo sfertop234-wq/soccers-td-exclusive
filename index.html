@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SOCCERS TOWER DEFENS EXCLUSIVE v1.0.8 — Цены, Трейды, Роздачи и Админка</title>
+  <title>SOCCERS TOWER DEFENS EXCLUSIVE v1.0.9 — Цены, Трейды, Роздачи и Админка</title>
   <style>
     :root {
       --bg: #0b0f17;
@@ -26,13 +26,23 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     body { background: var(--bg); color: var(--text); padding: 16px 12px 56px; }
-    .container { max-width: 1120px; margin: 0 auto; }
+    .container { max-width: 1140px; margin: 0 auto; }
 
     header {
       background: var(--card); border: 1px solid var(--border); border-radius: 16px;
-      padding: 18px; margin-bottom: 14px; display: flex; flex-wrap: wrap;
+      padding: 18px; margin-bottom: 12px; display: flex; flex-wrap: wrap;
       justify-content: space-between; align-items: center; gap: 14px;
     }
+    .announce-bar {
+      background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35);
+      border-radius: 12px; padding: 10px 14px; margin-bottom: 14px;
+      font-size: 0.88rem; color: #dbeafe; display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    }
+    .announce-tag {
+      background: var(--accent); color: #fff; font-size: 0.7rem; font-weight: 800;
+      padding: 2px 8px; border-radius: 6px; text-transform: uppercase;
+    }
+
     .brand-tag {
       display: inline-block; background: rgba(245, 158, 11, 0.16); color: var(--gold);
       border: 1px solid rgba(245, 158, 11, 0.35); font-size: 0.72rem; font-weight: 800;
@@ -42,7 +52,7 @@
     h1 { font-size: 1.35rem; margin-bottom: 4px; }
     .subtitle { color: var(--muted); font-size: 0.85rem; }
 
-    .header-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+    .header-pills { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
     .db-status {
       font-size: 0.78rem; padding: 6px 10px; border-radius: 999px;
       background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--muted);
@@ -78,8 +88,9 @@
     button.fav-btn.active { color: var(--gold); border-color: rgba(245, 158, 11, 0.45); background: rgba(245, 158, 11, 0.12); }
     button:active { transform: scale(0.98); }
 
-    .controls { display: grid; grid-template-columns: 1fr auto auto auto; gap: 10px; margin-bottom: 16px; }
-    @media (max-width: 780px) { .controls { grid-template-columns: 1fr; } }
+    .controls { display: grid; grid-template-columns: 1.2fr auto auto auto auto; gap: 10px; margin-bottom: 16px; }
+    @media (max-width: 900px) { .controls { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 560px) { .controls { grid-template-columns: 1fr; } }
 
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 12px; }
 
@@ -98,6 +109,7 @@
     .badge.flat { color: var(--flat); background: var(--flat-bg); }
     .badge.creator { color: var(--gold); background: rgba(245, 158, 11, 0.16); border: 1px solid rgba(245, 158, 11, 0.35); }
     .badge.active-code { color: #4ade80; background: rgba(22, 163, 74, 0.16); border: 1px solid rgba(22, 163, 74, 0.35); }
+    .badge.expired-code { color: #f87171; background: rgba(220, 38, 38, 0.16); border: 1px solid rgba(220, 38, 38, 0.35); }
 
     .item-bottom {
       display: flex; justify-content: space-between; align-items: baseline;
@@ -157,15 +169,21 @@
   <div id="mainApp" class="container">
     <header>
       <div>
-        <div class="brand-tag">EXCLUSIVE • v1.0.8</div>
+        <div class="brand-tag">EXCLUSIVE • v1.0.9</div>
         <h1>SOCCERS TOWER DEFENS exclusive</h1>
         <p class="subtitle">Цены юнитов • Трейды • Роздачи • Коды • Поддержка</p>
       </div>
       <div class="header-pills">
+        <button id="setNickBtn" type="button" class="secondary-btn" style="padding:6px 10px; font-size:0.78rem;">Ник: <span id="currentNickLabel">Гость</span></button>
         <div class="db-status">Онлайн: <strong id="onlineCountHeader" style="color:#4ade80;">1</strong></div>
         <div class="db-status">База: <strong id="dbStatusText" style="color:var(--text);">Подключение...</strong></div>
       </div>
     </header>
+
+    <div id="announceBar" class="announce-bar">
+      <span class="announce-tag">НОВОСТЬ ОТ РЮИ</span>
+      <span id="announceText">Добро пожаловать в обновление v1.0.9! Проверяйте калькулятор трейдов, списки «Есть / Ищу» и свежие коды.</span>
+    </div>
 
     <div class="tabs">
       <button class="tab-btn active" data-tab="prices">Цены (<span id="unitsCount">0</span>)</button>
@@ -173,8 +191,8 @@
       <button class="tab-btn" data-tab="giveaways">Роздачи (<span id="gwCount">0</span>)</button>
       <button class="tab-btn" data-tab="codes">Коды (<span id="codesCount">3</span>)</button>
       <button class="tab-btn" data-tab="creators"># Создатели</button>
-      <button class="tab-btn" data-tab="updates">📋 v1.0.8</button>
-      <button class="tab-btn" data-tab="support">🆘 Поддержка</button>
+      <button class="tab-btn" data-tab="updates">📋 v1.0.9</button>
+      <button class="tab-btn" data-tab="support">🆘 Поддержка (<span id="supPublicBadge">0</span>)</button>
       <button class="tab-btn admin-tab" data-tab="admin">🔐 Админка</button>
     </div>
 
@@ -197,6 +215,12 @@
           <option value="DOWN">Упала ▼</option>
           <option value="FLAT">Без изменений —</option>
         </select>
+        <select id="sortFilter">
+          <option value="DEFAULT">Сортировка: список</option>
+          <option value="PRICE_DESC">Дорогие сверху ↓</option>
+          <option value="PRICE_ASC">Дешёвые сверху ↑</option>
+          <option value="NAME_ASC">По названию (А–Я)</option>
+        </select>
         <button id="favFilterBtn" type="button" class="secondary-btn" style="width:100%;">☆ Избранные</button>
       </div>
       <div id="pricesGrid" class="grid"></div>
@@ -218,7 +242,7 @@
           </div>
           <div class="stat-card">
             <div class="item-class">Оценка сделки</div>
-            <div class="stat-num" id="tradeVerdictDisplay" style="font-size:1.05rem;">Равный обмен</div>
+            <div class="stat-num" id="tradeVerdictDisplay" style="font-size:1.05rem;">Добавь юнитов</div>
           </div>
         </div>
         <div class="trade-cols">
@@ -241,6 +265,25 @@
         </div>
         <div>
           <button id="clearTradeBtn" type="button" class="secondary-btn">Очистить трейд</button>
+        </div>
+      </div>
+
+      <div class="trade-cols">
+        <div class="admin-box">
+          <div style="font-weight:700; color:#4ade80;">✅ Мой список «Есть»</div>
+          <div style="display:flex; gap:8px;">
+            <select id="haveUnitSelect"></select>
+            <button id="addHaveBtn" type="button" class="action-btn">Добавить</button>
+          </div>
+          <div id="haveList" class="trade-list"></div>
+        </div>
+        <div class="admin-box">
+          <div style="font-weight:700; color:#fbbf24;">🔎 Мой список «Ищу»</div>
+          <div style="display:flex; gap:8px;">
+            <select id="wantUnitSelect"></select>
+            <button id="addWantBtn" type="button" class="warn-btn">Добавить</button>
+          </div>
+          <div id="wantList" class="trade-list"></div>
         </div>
       </div>
     </section>
@@ -276,23 +319,22 @@
         <article class="item-card">
           <div>
             <div class="item-class">АКТУАЛЬНАЯ ВЕРСИЯ</div>
-            <div class="item-name">Обновление v1.0.8</div>
+            <div class="item-name">Обновление v1.0.9</div>
             <div class="subtitle" style="margin-top:8px;">
-              • Добавлен калькулятор трейдов с оценкой обмена.<br/>
-              • Добавлено избранное (★) на карточках цен.<br/>
-              • В коды добавлен статус активности, а к завершённым роздачам — копирование победителей.<br/>
-              • В админке появилось быстрое обновление цен юнитов.
+              • Добавлен баннер объявлений от создателя Рюи.<br/>
+              • Добавлено сохранение ника игрока и сортировка цен.<br/>
+              • В трейды добавлены списки «Есть» и «Ищу».<br/>
+              • В админку добавлено управление кодами и новостью дня.
             </div>
           </div>
         </article>
         <article class="item-card">
           <div>
-            <div class="item-class">ПРЕДЫДУЩИЕ СБОРКИ</div>
-            <div class="item-name">v1.0.0 — v1.0.7</div>
+            <div class="item-class">ОБНОВЛЕНИЕ v1.0.8</div>
+            <div class="item-name">Трейды, Избранное и Цены</div>
             <div class="subtitle" style="margin-top:8px;">
-              • База из 72 юнитов по 6 классам.<br/>
-              • Общие роздачи в реальном времени через Firebase.<br/>
-              • Панель создателя Рюи, техперерыв по паролю и обратная связь в поддержку.
+              • Калькулятор обменов с оценкой сделки.<br/>
+              • Избранное (★), копирование победителей и редактирование цен в админке.
             </div>
           </div>
         </article>
@@ -320,7 +362,7 @@
     <section id="tab-admin" class="hidden">
       <div id="adminLoginBox" class="admin-box">
         <div style="font-weight:700; color:var(--gold);">Вход в панель создателя (Рюи)</div>
-        <div class="subtitle">Введи пароль администратора, чтобы управлять сайтом, ценами, шансами и поддержкой.</div>
+        <div class="subtitle">Введи пароль администратора, чтобы управлять сайтом, ценами, кодами, шансами и поддержкой.</div>
         <input id="adminPassInput" type="password" placeholder="Пароль администратора..." />
         <button id="adminLoginBtn" type="button" class="action-btn">Войти в админку</button>
       </div>
@@ -329,7 +371,7 @@
         <!-- ОБЩАЯ СТАТИСТИКА И ТЕХПЕРЕРЫВ -->
         <div class="admin-box">
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-            <strong style="color:var(--gold);">Панель управления Рюи (v1.0.8)</strong>
+            <strong style="color:var(--gold);">Панель управления Рюи (v1.0.9)</strong>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
               <button id="toggleMaintBtn" type="button" class="warn-btn">Включить техперерыв</button>
               <button id="adminLogoutBtn" type="button" class="secondary-btn">Выйти</button>
@@ -356,6 +398,14 @@
           </div>
         </div>
 
+        <!-- ОБЪЯВЛЕНИЕ / НОВОСТЬ ДНЯ -->
+        <div class="admin-box">
+          <div style="font-weight:700; color:#60a5fa;">📢 Объявление на главной странице</div>
+          <input id="adminAnnounceInput" type="text" placeholder="Текст объявления для всех игроков..." />
+          <button id="saveAnnounceBtn" type="button" class="action-btn">Обновить объявление</button>
+          <div id="announceSavedNote" class="ok-msg hidden">Объявление сохранено!</div>
+        </div>
+
         <!-- БЫСТРОЕ ИЗМЕНЕНИЕ ЦЕНЫ ЮНИТА -->
         <div class="admin-box">
           <div style="font-weight:700; color:#60a5fa;">💲 Обновить цену юнита (сохраняется в базе)</div>
@@ -363,6 +413,17 @@
           <input id="editPriceValueInput" type="text" placeholder="Новая цена (например: 125 или 32K)" />
           <button id="savePriceBtn" type="button" class="action-btn">Сохранить цену</button>
           <div id="priceSavedNote" class="ok-msg hidden">Цена обновлена у всех!</div>
+        </div>
+
+        <!-- УПРАВЛЕНИЕ КОДАМИ -->
+        <div class="admin-box">
+          <div style="font-weight:700; color:#fbbf24;">🎟️ Добавить код в раздел «Коды»</div>
+          <div class="gw-row">
+            <input id="newCodeStr" type="text" placeholder="Код (например: NewUpdate109)" />
+            <input id="newCodeReward" type="text" placeholder="Награда (например: 5,000 Gems)" />
+            <button id="addCodeBtn" type="button" class="action-btn">Добавить код</button>
+          </div>
+          <div id="adminCodesList" class="trade-list"></div>
         </div>
 
         <!-- СКРЫТАЯ НАКРУТКА ШАНСОВ НА РОЗЫГРЫШ -->
@@ -495,7 +556,7 @@
       { name: "Sorcerer agent summer", className: "EPIC", rawValue: "10", prevRaw: "12" }
     ];
 
-    const CODES = [
+    const DEFAULT_CODES = [
       { code: "The2ndAnniversary", reward: "1,000 Anniversary Coins", status: "Активен" },
       { code: "PinataTowerDefence", reward: "2,000 Gems", status: "Активен" },
       { code: "SpinTheWheel", reward: "20 Anniversary Crystals", status: "Активен" }
@@ -512,6 +573,8 @@
     const USER_KEY = "std_exclusive_uid_v3";
     const NICK_KEY = "std_exclusive_nick_v3";
     const FAV_KEY = "std_exclusive_favs_v1";
+    const HAVE_KEY = "std_exclusive_have_v1";
+    const WANT_KEY = "std_exclusive_want_v1";
     const ADMIN_SESSION_KEY = "std_exclusive_admin_auth_v1";
 
     function getUserId() {
@@ -527,12 +590,25 @@
       return localStorage.getItem(NICK_KEY) || ("Гость#" + getUserId().slice(-4).toUpperCase());
     }
 
+    function syncNickUI() {
+      const nick = localStorage.getItem(NICK_KEY) || "";
+      document.getElementById("currentNickLabel").textContent = nick || "Гость";
+      if (nick) {
+        document.getElementById("gwAuthor").value = nick;
+        document.getElementById("supNick").value = nick;
+      }
+    }
+
     function isAdmin() {
       return sessionStorage.getItem(ADMIN_SESSION_KEY) === "1";
     }
 
     let units = [...DEFAULT_UNITS];
+    let codes = [...DEFAULT_CODES];
+    let announcement = "Добро пожаловать в обновление v1.0.9! Проверяйте калькулятор трейдов, списки «Есть / Ищу» и свежие коды.";
     let favorites = JSON.parse(localStorage.getItem(FAV_KEY) || "[]");
+    let haveList = JSON.parse(localStorage.getItem(HAVE_KEY) || "[]");
+    let wantList = JSON.parse(localStorage.getItem(WANT_KEY) || "[]");
     let onlyFavs = false;
     let giveItems = [];
     let getItems = [];
@@ -574,8 +650,10 @@
 
     function populateUnitSelectors() {
       const opts = units.map((u, idx) => `<option value="${idx}">${u.name} (${u.rawValue})</option>`).join("");
-      document.getElementById("giveUnitSelect").innerHTML = opts;
-      document.getElementById("getUnitSelect").innerHTML = opts;
+      ["giveUnitSelect", "getUnitSelect", "haveUnitSelect", "wantUnitSelect"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = opts;
+      });
 
       const editSelect = document.getElementById("editPriceUnitSelect");
       const prevIdx = editSelect.value || "0";
@@ -597,13 +675,14 @@
       const q = document.getElementById("searchInput").value.trim().toLowerCase();
       const cls = document.getElementById("classFilter").value;
       const trd = document.getElementById("trendFilter").value;
+      const sort = document.getElementById("sortFilter").value;
 
       const list = units.map(u => {
         const cur = parseNum(u.rawValue);
         const prev = parseNum(u.prevRaw);
         const trend = cur > prev ? "UP" : cur < prev ? "DOWN" : "FLAT";
         const isFav = favorites.includes(u.name);
-        return { ...u, trend, isFav };
+        return { ...u, cur, trend, isFav };
       }).filter(u => {
         if (onlyFavs && !u.isFav) return false;
         if (q && !u.name.toLowerCase().includes(q)) return false;
@@ -611,6 +690,10 @@
         if (trd !== "ALL" && u.trend !== trd) return false;
         return true;
       });
+
+      if (sort === "PRICE_DESC") list.sort((a, b) => b.cur - a.cur);
+      else if (sort === "PRICE_ASC") list.sort((a, b) => a.cur - b.cur);
+      else if (sort === "NAME_ASC") list.sort((a, b) => a.name.localeCompare(b.name, "en"));
 
       document.getElementById("unitsCount").textContent = String(units.length);
       document.getElementById("pricesGrid").innerHTML = list.map(u => {
@@ -637,6 +720,33 @@
         `;
       }).join("");
     }
+
+    function renderHaveWantLists() {
+      document.getElementById("haveList").innerHTML = haveList.map((u, i) => `
+        <div class="trade-chip">
+          <span>${u.name} (${u.rawValue})</span>
+          <button type="button" class="danger-btn" style="padding:4px 8px;" onclick="removeHaveWant('have', ${i})">×</button>
+        </div>
+      `).join("") || `<div class="subtitle">Пока пусто</div>`;
+
+      document.getElementById("wantList").innerHTML = wantList.map((u, i) => `
+        <div class="trade-chip">
+          <span>${u.name} (${u.rawValue})</span>
+          <button type="button" class="danger-btn" style="padding:4px 8px;" onclick="removeHaveWant('want', ${i})">×</button>
+        </div>
+      `).join("") || `<div class="subtitle">Пока пусто</div>`;
+    }
+
+    window.removeHaveWant = function(kind, idx) {
+      if (kind === "have") {
+        haveList.splice(idx, 1);
+        localStorage.setItem(HAVE_KEY, JSON.stringify(haveList));
+      } else {
+        wantList.splice(idx, 1);
+        localStorage.setItem(WANT_KEY, JSON.stringify(wantList));
+      }
+      renderHaveWantLists();
+    };
 
     function renderTrades() {
       const giveSum = giveItems.reduce((s, item) => s + parseNum(item.rawValue), 0);
@@ -673,6 +783,8 @@
           <button type="button" class="danger-btn" style="padding:4px 8px;" onclick="removeTradeItem('get', ${i})">×</button>
         </div>
       `).join("") || `<div class="subtitle">Пусто</div>`;
+
+      renderHaveWantLists();
     }
 
     window.removeTradeItem = function(side, idx) {
@@ -727,22 +839,36 @@
 
     async function syncFromCloud() {
       try {
-        const [gwData, onlineData, maintData, ticketsData, savedUnits] = await Promise.all([
+        const [gwData, onlineData, maintData, ticketsData, savedUnits, savedCodes, savedAnnounce] = await Promise.all([
           dbRequest("giveaways"),
           dbRequest("online"),
           dbRequest("settings/maintenance"),
           dbRequest("support_tickets"),
-          dbRequest("settings/units")
+          dbRequest("settings/units"),
+          dbRequest("settings/codes"),
+          dbRequest("settings/announcement")
         ]);
         giveaways = gwData || {};
         supportTickets = ticketsData || {};
         maintenanceEnabled = Boolean(maintData);
+
+        if (typeof savedAnnounce === "string" && savedAnnounce.trim()) {
+          announcement = savedAnnounce.trim();
+          document.getElementById("announceText").textContent = announcement;
+          const annInput = document.getElementById("adminAnnounceInput");
+          if (annInput && document.activeElement !== annInput) annInput.value = announcement;
+        }
 
         if (Array.isArray(savedUnits) && savedUnits.length > 0) {
           units = savedUnits;
           populateUnitSelectors();
           renderPrices();
           renderTrades();
+        }
+
+        if (Array.isArray(savedCodes) && savedCodes.length > 0) {
+          codes = savedCodes;
+          renderCodes();
         }
 
         applyMaintenanceGate();
@@ -863,6 +989,34 @@
       }).join("");
     }
 
+    function renderAdminCodesList() {
+      document.getElementById("adminCodesList").innerHTML = codes.map((c, i) => `
+        <div class="trade-chip">
+          <span><strong>${c.code}</strong> — ${c.reward} (${c.status})</span>
+          <div style="display:flex; gap:6px; width:auto;">
+            <button type="button" class="secondary-btn" style="padding:4px 8px;" onclick="toggleCodeStatus(${i})">${c.status === "Активен" ? "Истёк" : "Активировать"}</button>
+            <button type="button" class="danger-btn" style="padding:4px 8px;" onclick="deleteCodeItem(${i})">×</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    window.toggleCodeStatus = async function(idx) {
+      if (!isAdmin() || !codes[idx]) return;
+      codes[idx].status = codes[idx].status === "Активен" ? "Истёк" : "Активен";
+      await dbRequest("settings/codes", "PUT", codes);
+      renderCodes();
+      renderAdminCodesList();
+    };
+
+    window.deleteCodeItem = async function(idx) {
+      if (!isAdmin()) return;
+      codes.splice(idx, 1);
+      await dbRequest("settings/codes", "PUT", codes);
+      renderCodes();
+      renderAdminCodesList();
+    };
+
     function renderAdminPanel() {
       const logged = isAdmin();
       document.getElementById("adminLoginBox").classList.toggle("hidden", logged);
@@ -870,6 +1024,7 @@
       if (!logged) return;
 
       applyMaintenanceGate();
+      renderAdminCodesList();
 
       const onlineList = Object.values(onlineUsers);
       document.getElementById("adminOnlineCount").textContent = String(Math.max(1, onlineList.length));
@@ -897,6 +1052,7 @@
         .filter(([, t]) => t && t.message)
         .sort((a, b) => (b[1].createdAt || 0) - (a[1].createdAt || 0));
       document.getElementById("adminTicketsCount").textContent = String(ticketEntries.length);
+      document.getElementById("supPublicBadge").textContent = String(ticketEntries.length);
 
       const ticketsGrid = document.getElementById("adminTicketsGrid");
       if (!ticketEntries.length) {
@@ -941,6 +1097,41 @@
         `;
       }).join("");
     }
+
+    document.getElementById("setNickBtn").addEventListener("click", () => {
+      const current = localStorage.getItem(NICK_KEY) || "";
+      const next = prompt("Введи свой ник в Discord:", current);
+      if (next !== null) {
+        localStorage.setItem(NICK_KEY, next.trim());
+        syncNickUI();
+        sendHeartbeat();
+      }
+    });
+
+    document.getElementById("saveAnnounceBtn").addEventListener("click", async () => {
+      if (!isAdmin()) return;
+      const text = document.getElementById("adminAnnounceInput").value.trim();
+      if (!text) return;
+      announcement = text;
+      document.getElementById("announceText").textContent = announcement;
+      await dbRequest("settings/announcement", "PUT", announcement);
+      const note = document.getElementById("announceSavedNote");
+      note.classList.remove("hidden");
+      setTimeout(() => note.classList.add("hidden"), 2500);
+    });
+
+    document.getElementById("addCodeBtn").addEventListener("click", async () => {
+      if (!isAdmin()) return;
+      const code = document.getElementById("newCodeStr").value.trim();
+      const reward = document.getElementById("newCodeReward").value.trim();
+      if (!code || !reward) return alert("Введи код и награду!");
+      codes.unshift({ code, reward, status: "Активен" });
+      await dbRequest("settings/codes", "PUT", codes);
+      document.getElementById("newCodeStr").value = "";
+      document.getElementById("newCodeReward").value = "";
+      renderCodes();
+      renderAdminCodesList();
+    });
 
     document.getElementById("savePriceBtn").addEventListener("click", async () => {
       if (!isAdmin()) return;
@@ -996,6 +1187,7 @@
         if (!nick) {
           nick = prompt("Введи свой ник в Discord для участия:") || getUserNick();
           localStorage.setItem(NICK_KEY, nick.trim());
+          syncNickUI();
         }
         await dbRequest(`giveaways/${id}/participants/${myId}`, "PUT", nick.trim());
       }
@@ -1020,6 +1212,7 @@
       if (!author || !text) return;
 
       localStorage.setItem(NICK_KEY, author);
+      syncNickUI();
 
       const id = "gw_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6);
       const payload = {
@@ -1048,6 +1241,7 @@
       if (!nick || !message) return;
 
       localStorage.setItem(NICK_KEY, nick);
+      syncNickUI();
       const tid = "t_" + Date.now() + "_" + Math.random().toString(36).slice(2, 5);
       await dbRequest(`support_tickets/${tid}`, "PUT", {
         nick,
@@ -1123,6 +1317,24 @@
       }
     });
 
+    document.getElementById("addHaveBtn").addEventListener("click", () => {
+      const idx = parseInt(document.getElementById("haveUnitSelect").value, 10);
+      if (units[idx]) {
+        haveList.push(units[idx]);
+        localStorage.setItem(HAVE_KEY, JSON.stringify(haveList));
+        renderHaveWantLists();
+      }
+    });
+
+    document.getElementById("addWantBtn").addEventListener("click", () => {
+      const idx = parseInt(document.getElementById("wantUnitSelect").value, 10);
+      if (units[idx]) {
+        wantList.push(units[idx]);
+        localStorage.setItem(WANT_KEY, JSON.stringify(wantList));
+        renderHaveWantLists();
+      }
+    });
+
     document.getElementById("clearTradeBtn").addEventListener("click", () => {
       giveItems = [];
       getItems = [];
@@ -1130,20 +1342,23 @@
     });
 
     function renderCodes() {
-      document.getElementById("codesCount").textContent = String(CODES.length);
-      document.getElementById("codesGrid").innerHTML = CODES.map(c => `
-        <article class="item-card">
-          <div>
-            <div class="item-top">
-              <div class="item-class">КОД ИЗ КАНАЛА</div>
-              <span class="badge active-code">${c.status}</span>
+      document.getElementById("codesCount").textContent = String(codes.length);
+      document.getElementById("codesGrid").innerHTML = codes.map(c => {
+        const isAct = c.status === "Активен";
+        return `
+          <article class="item-card">
+            <div>
+              <div class="item-top">
+                <div class="item-class">КОД ИЗ КАНАЛА</div>
+                <span class="badge ${isAct ? "active-code" : "expired-code"}">${c.status}</span>
+              </div>
+              <div class="code-str" style="margin-top:6px;">${c.code}</div>
+              <div class="subtitle" style="margin-top:6px;">Награда: ${c.reward}</div>
             </div>
-            <div class="code-str" style="margin-top:6px;">${c.code}</div>
-            <div class="subtitle" style="margin-top:6px;">Награда: ${c.reward}</div>
-          </div>
-          <button type="button" class="secondary-btn" onclick="copyCode('${c.code}', this)">Копировать код</button>
-        </article>
-      `).join("");
+            <button type="button" class="secondary-btn" onclick="copyCode('${c.code}', this)">Копировать код</button>
+          </article>
+        `;
+      }).join("");
     }
 
     function renderCreators() {
@@ -1179,17 +1394,12 @@
       });
     });
 
-    ["searchInput", "classFilter", "trendFilter"].forEach(id => {
+    ["searchInput", "classFilter", "trendFilter", "sortFilter"].forEach(id => {
       document.getElementById(id).addEventListener("input", renderPrices);
       document.getElementById(id).addEventListener("change", renderPrices);
     });
 
-    const savedNick = localStorage.getItem(NICK_KEY);
-    if (savedNick) {
-      document.getElementById("gwAuthor").value = savedNick;
-      document.getElementById("supNick").value = savedNick;
-    }
-
+    syncNickUI();
     populateUnitSelectors();
     renderPrices();
     renderTrades();
