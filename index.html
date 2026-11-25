@@ -1,5 +1,798 @@
-<html>
-  <head>
-    <text>"ТЕХ ПЕРЕРИВ"</text>
-  </head>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SOCCERS TOWER DEFENS EXCLUSIVE — Цены, Роздачи, Коды и Админка</title>
+  <style>
+    :root {
+      --bg: #0b0f17;
+      --card: #131a26;
+      --card-hover: #192232;
+      --border: #233044;
+      --text: #eef2f7;
+      --muted: #8b9bb4;
+      --accent: #3b82f6;
+      --gold: #f59e0b;
+      --danger: #dc2626;
+      --danger-bg: rgba(220, 38, 38, 0.16);
+      --up: #16a34a;
+      --up-bg: rgba(22, 163, 74, 0.16);
+      --down: #dc2626;
+      --down-bg: rgba(220, 38, 38, 0.16);
+      --flat: #94a3b8;
+      --flat-bg: rgba(148, 163, 184, 0.14);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 16px 12px 56px; }
+    .container { max-width: 1080px; margin: 0 auto; }
+
+    header {
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+      padding: 18px; margin-bottom: 14px; display: flex; flex-wrap: wrap;
+      justify-content: space-between; align-items: center; gap: 14px;
+    }
+    .brand-tag {
+      display: inline-block; background: rgba(245, 158, 11, 0.16); color: var(--gold);
+      border: 1px solid rgba(245, 158, 11, 0.35); font-size: 0.72rem; font-weight: 800;
+      letter-spacing: 0.08em; padding: 3px 9px; border-radius: 6px; margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    h1 { font-size: 1.35rem; margin-bottom: 4px; }
+    .subtitle { color: var(--muted); font-size: 0.85rem; }
+
+    .header-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+    .db-status {
+      font-size: 0.78rem; padding: 6px 10px; border-radius: 999px;
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--muted);
+    }
+
+    .tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .tab-btn {
+      background: var(--card); color: var(--muted); border: 1px solid var(--border);
+      border-radius: 12px; padding: 10px 16px; font-weight: 700; cursor: pointer;
+    }
+    .tab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .tab-btn.admin-tab { border-color: rgba(245, 158, 11, 0.4); color: var(--gold); }
+    .tab-btn.admin-tab.active { background: var(--gold); color: #0b0f17; border-color: var(--gold); }
+
+    button, select, input, textarea {
+      background: var(--card); color: var(--text); border: 1px solid var(--border);
+      border-radius: 10px; padding: 9px 12px; font-size: 0.9rem; outline: none; width: 100%;
+    }
+    button.action-btn { background: var(--accent); border-color: var(--accent); font-weight: 700; cursor: pointer; width: auto; }
+    button.warn-btn {
+      background: rgba(245, 158, 11, 0.18); color: var(--gold); border-color: rgba(245, 158, 11, 0.45);
+      font-weight: 700; cursor: pointer; width: auto;
+    }
+    button.secondary-btn { background: rgba(255,255,255,0.06); border-color: var(--border); font-weight: 600; cursor: pointer; width: auto; }
+    button.danger-btn {
+      background: var(--danger-bg); color: #fca5a5; border-color: rgba(220, 38, 38, 0.45);
+      font-weight: 700; cursor: pointer; width: auto;
+    }
+    button:active { transform: scale(0.98); }
+
+    .controls { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; margin-bottom: 16px; }
+    @media (max-width: 680px) { .controls { grid-template-columns: 1fr; } }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 12px; }
+
+    .item-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 15px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px;
+    }
+    .item-card:hover { background: var(--card-hover); }
+    .item-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .item-class { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+    .item-name { font-size: 1.02rem; font-weight: 700; }
+
+    .badge { padding: 4px 8px; border-radius: 8px; font-size: 0.76rem; font-weight: 700; white-space: nowrap; }
+    .badge.up { color: var(--up); background: var(--up-bg); }
+    .badge.down { color: var(--down); background: var(--down-bg); }
+    .badge.flat { color: var(--flat); background: var(--flat-bg); }
+    .badge.creator { color: var(--gold); background: rgba(245, 158, 11, 0.16); border: 1px solid rgba(245, 158, 11, 0.35); }
+
+    .item-bottom {
+      display: flex; justify-content: space-between; align-items: baseline;
+      border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px;
+    }
+    .value-price { font-size: 1.25rem; font-weight: 800; color: #60a5fa; }
+    .prev-price { font-size: 0.78rem; color: var(--muted); }
+
+    .gw-form, .admin-box, .maint-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 16px; margin-bottom: 16px; display: grid; gap: 10px;
+    }
+    .maint-card {
+      max-width: 520px; margin: 40px auto; border-color: rgba(245, 158, 11, 0.45);
+    }
+    .gw-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    @media (max-width: 640px) { .gw-row { grid-template-columns: 1fr; } }
+    .gw-meta { font-size: 0.82rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 10px; }
+    .gw-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .creator-note { font-size: 0.8rem; color: var(--gold); }
+    .winners-box {
+      background: rgba(22, 163, 74, 0.12); border: 1px solid rgba(22, 163, 74, 0.35);
+      color: #86efac; padding: 10px; border-radius: 10px; font-size: 0.85rem;
+    }
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 14px; }
+    .stat-card {
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px;
+    }
+    .stat-num { font-size: 1.5rem; font-weight: 800; color: var(--gold); margin-top: 4px; }
+    .code-str { font-family: monospace; font-size: 1.05rem; font-weight: 700; color: #fbbf24; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <!-- ЭКРАН ТЕХПЕРЕРЫВА ДЛЯ ОБЫЧНЫХ УЧАСТНИКОВ -->
+  <div id="maintenanceScreen" class="container hidden">
+    <div class="maint-card">
+      <div class="brand-tag">ТЕХПЕРЕРЫВ • РЮИ</div>
+      <h2>Сайт временно на техперерыве</h2>
+      <p class="subtitle">Обновляем данные и проверяем систему. Для остальных участников доступ временно закрыт.</p>
+      <div style="margin-top:6px; font-weight:700; font-size:0.9rem;">Вход для создателя (по паролю):</div>
+      <input id="maintPassInput" type="password" placeholder="Введите пароль администратора..." />
+      <button id="maintLoginBtn" type="button" class="action-btn">Войти для проверки</button>
+    </div>
+  </div>
+
+  <!-- ОСНОВНОЙ ИНТЕРФЕЙС САЙТА -->
+  <div id="mainApp" class="container">
+    <header>
+      <div>
+        <div class="brand-tag">EXCLUSIVE</div>
+        <h1>SOCCERS TOWER DEFENS exclusive</h1>
+        <p class="subtitle">Цены юнитов • Общие роздачи • Коды • Создатели</p>
+      </div>
+      <div class="header-pills">
+        <div class="db-status">Онлайн: <strong id="onlineCountHeader" style="color:#4ade80;">1</strong></div>
+        <div class="db-status">База: <strong id="dbStatusText" style="color:var(--text);">Подключение...</strong></div>
+      </div>
+    </header>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="prices">Цены (<span id="unitsCount">0</span>)</button>
+      <button class="tab-btn" data-tab="giveaways">Роздачи (<span id="gwCount">0</span>)</button>
+      <button class="tab-btn" data-tab="codes">Коды (<span id="codesCount">3</span>)</button>
+      <button class="tab-btn" data-tab="creators"># Создатели</button>
+      <button class="tab-btn admin-tab" data-tab="admin">🔐 Админка</button>
+    </div>
+
+    <!-- ВКЛАДКА ЦЕН -->
+    <section id="tab-prices">
+      <div class="controls">
+        <input id="searchInput" type="search" placeholder="Поиск юнита по названию..." />
+        <select id="classFilter">
+          <option value="ALL">Все классы</option>
+          <option value="ASCENDED">ASCENDED</option>
+          <option value="SPECIAL GRADE">SPECIAL GRADE</option>
+          <option value="ANNIVERSARY">ANNIVERSARY</option>
+          <option value="MYTHIC">MYTHIC</option>
+          <option value="LEGENDARY">LEGENDARY</option>
+          <option value="EPIC">EPIC</option>
+        </select>
+        <select id="trendFilter">
+          <option value="ALL">Все изменения</option>
+          <option value="UP">Поднялась ▲</option>
+          <option value="DOWN">Упала ▼</option>
+          <option value="FLAT">Без изменений —</option>
+        </select>
+      </div>
+      <div id="pricesGrid" class="grid"></div>
+    </section>
+
+    <!-- ВКЛАДКА РОЗДАЧ -->
+    <section id="tab-giveaways" class="hidden">
+      <form id="gwForm" class="gw-form">
+        <div style="font-weight:700;">Создать общую роздачу (видят все участники)</div>
+        <input id="gwAuthor" type="text" placeholder="Твой ник в Discord (например: Рюи / sfertop234)" required />
+        <textarea id="gwText" rows="2" placeholder="Текст роздачи и приз (например: Раздаю юнита!)" required></textarea>
+        <div class="gw-row">
+          <input id="gwMinutes" type="number" min="1" max="1440" value="5" placeholder="Время (мин)" required />
+          <input id="gwWinners" type="number" min="1" max="50" value="1" placeholder="Победителей" required />
+          <button type="submit" class="action-btn" style="width:100%;">Запустить</button>
+        </div>
+      </form>
+      <div id="gwGrid" class="grid"></div>
+    </section>
+
+    <!-- ВКЛАДКА КОДОВ -->
+    <section id="tab-codes" class="hidden">
+      <div id="codesGrid" class="grid"></div>
+    </section>
+
+    <!-- ВКЛАДКА СОЗДАТЕЛЕЙ -->
+    <section id="tab-creators" class="hidden">
+      <div id="creatorsGrid" class="grid"></div>
+    </section>
+
+    <!-- АДМИН-ПАНЕЛЬ -->
+    <section id="tab-admin" class="hidden">
+      <div id="adminLoginBox" class="admin-box">
+        <div style="font-weight:700; color:var(--gold);">Вход в панель создателя (Рюи)</div>
+        <div class="subtitle">Введи пароль администратора, чтобы управлять техперерывом, смотреть онлайн и удалять любые розыгрыши.</div>
+        <input id="adminPassInput" type="password" placeholder="Пароль администратора..." />
+        <button id="adminLoginBtn" type="button" class="action-btn">Войти в админку</button>
+      </div>
+
+      <div id="adminPanelBox" class="hidden">
+        <div class="admin-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <strong style="color:var(--gold);">Панель управления Рюи</strong>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button id="toggleMaintBtn" type="button" class="warn-btn">Включить техперерыв</button>
+              <button id="adminLogoutBtn" type="button" class="secondary-btn">Выйти</button>
+            </div>
+          </div>
+          <div class="subtitle">Режим техперерыва для остальных: <strong id="maintStatusLabel" style="color:var(--text);">ВЫКЛЮЧЕН</strong></div>
+          <div class="stat-grid">
+            <div class="stat-card">
+              <div class="item-class">Сейчас на сайте</div>
+              <div class="stat-num" id="adminOnlineCount">1</div>
+            </div>
+            <div class="stat-card">
+              <div class="item-class">Активных розыгрышей</div>
+              <div class="stat-num" id="adminActiveGw">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="item-class">Всего участников в розыгрышах</div>
+              <div class="stat-num" id="adminTotalParticipants">0</div>
+            </div>
+          </div>
+          <div>
+            <div class="item-class" style="margin-bottom:6px;">Кто сейчас на сайте:</div>
+            <div id="adminOnlineList" class="subtitle">—</div>
+          </div>
+        </div>
+
+        <div style="font-weight:700; margin-bottom:10px;">Управление всеми розыгрышами (удаление любого розыгрыша):</div>
+        <div id="adminGwGrid" class="grid"></div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const FIREBASE_DB_URL = "https://soccers-td-db-default-rtdb.europe-west1.firebasedatabase.app";
+    const ADMIN_PASSWORD = "rodrod123123";
+
+    const DEFAULT_UNITS = [
+      // ASCENDED
+      { name: "Bad The Anniversary Trait", className: "ASCENDED", rawValue: "320", prevRaw: "300" },
+      { name: "The King Killer", className: "ASCENDED", rawValue: "161K", prevRaw: "155K" },
+      { name: "Bad heavenly restriction", className: "ASCENDED", rawValue: "70", prevRaw: "70" },
+      { name: "Bad the honored one", className: "ASCENDED", rawValue: "270", prevRaw: "250" },
+      { name: "King of Curses evolution", className: "ASCENDED", rawValue: "845", prevRaw: "820" },
+      { name: "Strongest sorcerer evolution", className: "ASCENDED", rawValue: "590", prevRaw: "610" },
+      { name: "Sorcerer killer evolution", className: "ASCENDED", rawValue: "265", prevRaw: "265" },
+      { name: "Curse manipulator evolution", className: "ASCENDED", rawValue: "195", prevRaw: "205" },
+
+      // SPECIAL GRADE
+      { name: "Projection sorcerer", className: "SPECIAL GRADE", rawValue: "115", prevRaw: "105" },
+      { name: "Justice sorcerer", className: "SPECIAL GRADE", rawValue: "110", prevRaw: "110" },
+      { name: "King of Curses christmas", className: "SPECIAL GRADE", rawValue: "130", prevRaw: "120" },
+      { name: "Lighting sorcerer", className: "SPECIAL GRADE", rawValue: "55", prevRaw: "60" },
+      { name: "Strongest sorcerer", className: "SPECIAL GRADE", rawValue: "70", prevRaw: "70" },
+      { name: "Strongest sorcerer christmas", className: "SPECIAL GRADE", rawValue: "80", prevRaw: "75" },
+      { name: "Red scarf sorcerer awakened", className: "SPECIAL GRADE", rawValue: "50", prevRaw: "50" },
+      { name: "Strongest sorcerer zombie", className: "SPECIAL GRADE", rawValue: "35", prevRaw: "40" },
+      { name: "King of Curses", className: "SPECIAL GRADE", rawValue: "40", prevRaw: "40" },
+      { name: "Volcano curse", className: "SPECIAL GRADE", rawValue: "43", prevRaw: "40" },
+      { name: "Nature curse", className: "SPECIAL GRADE", rawValue: "39", prevRaw: "39" },
+      { name: "Ocean curse", className: "SPECIAL GRADE", rawValue: "37", prevRaw: "39" },
+      { name: "Sorcerer killer", className: "SPECIAL GRADE", rawValue: "23", prevRaw: "23" },
+      { name: "Soul curse awakened", className: "SPECIAL GRADE", rawValue: "21", prevRaw: "19" },
+      { name: "Mass sorcerer", className: "SPECIAL GRADE", rawValue: "19", prevRaw: "19" },
+      { name: "Cursed sorcerer", className: "SPECIAL GRADE", rawValue: "17", prevRaw: "17" },
+      { name: "Overtime sorcerer awakened", className: "SPECIAL GRADE", rawValue: "16", prevRaw: "15" },
+      { name: "Curse manipulator", className: "SPECIAL GRADE", rawValue: "15", prevRaw: "15" },
+      { name: "Jackpot sorcerer", className: "SPECIAL GRADE", rawValue: "14", prevRaw: "16" },
+
+      // ANNIVERSARY
+      { name: "Cursed Sorcerer Wrangler", className: "ANNIVERSARY", rawValue: "110", prevRaw: "150" },
+      { name: "Shadow sorcerer party", className: "ANNIVERSARY", rawValue: "205", prevRaw: "190" },
+      { name: "Strongest sorcerer disco", className: "ANNIVERSARY", rawValue: "55", prevRaw: "55" },
+      { name: "Party cannon", className: "ANNIVERSARY", rawValue: "35", prevRaw: "40" },
+
+      // MYTHIC
+      { name: "Red scarf sorcerer summer", className: "MYTHIC", rawValue: "30.5K", prevRaw: "29K" },
+      { name: "Harvester curse", className: "MYTHIC", rawValue: "2,225", prevRaw: "2,100" },
+      { name: "Tree of Life", className: "MYTHIC", rawValue: "1,640", prevRaw: "1,700" },
+      { name: "Frames sorcerer", className: "MYTHIC", rawValue: "950", prevRaw: "900" },
+      { name: "Kogane", className: "MYTHIC", rawValue: "940", prevRaw: "940" },
+      { name: "Candy Machine", className: "MYTHIC", rawValue: "865", prevRaw: "830" },
+      { name: "Frost blossom", className: "MYTHIC", rawValue: "765", prevRaw: "790" },
+      { name: "Pinata", className: "MYTHIC", rawValue: "500", prevRaw: "500" },
+      { name: "Shadow sorcerer", className: "MYTHIC", rawValue: "275", prevRaw: "260" },
+      { name: "Wealth sorcerer", className: "MYTHIC", rawValue: "275", prevRaw: "275" },
+      { name: "Blood curse", className: "MYTHIC", rawValue: "240", prevRaw: "255" },
+      { name: "Gaze sorcerer", className: "MYTHIC", rawValue: "50", prevRaw: "50" },
+      { name: "Mecha sorcerer christmas", className: "MYTHIC", rawValue: "30", prevRaw: "25" },
+      { name: "Ice manipulator christmas", className: "MYTHIC", rawValue: "20", prevRaw: "20" },
+      { name: "Explosive sorcerer", className: "MYTHIC", rawValue: "19", prevRaw: "19" },
+      { name: "Barrier sorcerer", className: "MYTHIC", rawValue: "15", prevRaw: "15" },
+      { name: "Guitar sorcerer dj", className: "MYTHIC", rawValue: "15", prevRaw: "12" },
+      { name: "Soul curse", className: "MYTHIC", rawValue: "13", prevRaw: "13" },
+      { name: "Dance Floor", className: "MYTHIC", rawValue: "10", prevRaw: "10" },
+      { name: "Amplifying sorcerer", className: "MYTHIC", rawValue: "7", prevRaw: "7" },
+      { name: "Red scarf sorcerer anniversary", className: "MYTHIC", rawValue: "6", prevRaw: "6" },
+      { name: "Bow sorcerer awakened", className: "MYTHIC", rawValue: "6", prevRaw: "6" },
+      { name: "Boogie Sorcerer Anniversary", className: "MYTHIC", rawValue: "5", prevRaw: "5" },
+      { name: "Boogie sorcerer awakened", className: "MYTHIC", rawValue: "2", prevRaw: "2" },
+      { name: "Blood manipulator awakened", className: "MYTHIC", rawValue: "2", prevRaw: "2" },
+      { name: "Star sorcerer", className: "MYTHIC", rawValue: "1", prevRaw: "1" },
+      { name: "Overtime zombie", className: "MYTHIC", rawValue: "1", prevRaw: "1" },
+      { name: "Soul curse christmas", className: "MYTHIC", rawValue: "1", prevRaw: "1" },
+      { name: "Mask sorcerer", className: "MYTHIC", rawValue: "1", prevRaw: "1" },
+      { name: "Mecha sorcerer", className: "MYTHIC", rawValue: "1", prevRaw: "1" },
+      { name: "Overtime sorcerer", className: "MYTHIC", rawValue: "1", prevRaw: "1" },
+      { name: "Red scarf sorcerer", className: "MYTHIC", rawValue: "1", prevRaw: "1" },
+
+      // LEGENDARY
+      { name: "Miracle sorcerer", className: "LEGENDARY", rawValue: "3,150", prevRaw: "3,000" },
+      { name: "Rope sorcerer", className: "LEGENDARY", rawValue: "405", prevRaw: "390" },
+      { name: "Discount sorcerer", className: "LEGENDARY", rawValue: "295", prevRaw: "310" },
+      { name: "Slot machine", className: "LEGENDARY", rawValue: "85", prevRaw: "85" },
+      { name: "Helicopter sorcerer", className: "LEGENDARY", rawValue: "16", prevRaw: "16" },
+      { name: "Hand sorcerer", className: "LEGENDARY", rawValue: "13", prevRaw: "13" },
+      { name: "Claw sorcerer", className: "LEGENDARY", rawValue: "11", prevRaw: "10" },
+      { name: "Paperbag sorcerer", className: "LEGENDARY", rawValue: "10", prevRaw: "10" },
+      { name: "Tough sorcerer", className: "LEGENDARY", rawValue: "10", prevRaw: "10" },
+      { name: "Pain killer", className: "LEGENDARY", rawValue: "10", prevRaw: "10" },
+      { name: "Ice manipulator", className: "LEGENDARY", rawValue: "8", prevRaw: "8" },
+      { name: "Broom sorcerer witch", className: "LEGENDARY", rawValue: "8", prevRaw: "8" },
+      { name: "Cursed atm", className: "LEGENDARY", rawValue: "5", prevRaw: "6" },
+
+      // EPIC
+      { name: "Sorcerer agent", className: "EPIC", rawValue: "15", prevRaw: "12" },
+      { name: "Sorcerer agent christmas", className: "EPIC", rawValue: "15", prevRaw: "15" },
+      { name: "Reverse energy sorcerer", className: "EPIC", rawValue: "10", prevRaw: "10" },
+      { name: "Sorcerer agent summer", className: "EPIC", rawValue: "10", prevRaw: "12" }
+    ];
+
+    const CODES = [
+      { code: "The2ndAnniversary", reward: "1,000 Anniversary Coins" },
+      { code: "PinataTowerDefence", reward: "2,000 Gems" },
+      { code: "SpinTheWheel", reward: "20 Anniversary Crystals" }
+    ];
+
+    const CREATORS = [
+      {
+        name: "Рюи",
+        role: "СОЗДАТЕЛЬ САЙТА",
+        desc: "Основатель проекта SOCCERS TOWER DEFENS exclusive, роздач, кодов и Discord-сообщества."
+      }
+    ];
+
+    const USER_KEY = "std_exclusive_uid_v3";
+    const NICK_KEY = "std_exclusive_nick_v3";
+    const ADMIN_SESSION_KEY = "std_exclusive_admin_auth_v1";
+
+    function getUserId() {
+      let id = localStorage.getItem(USER_KEY);
+      if (!id) {
+        id = "u_" + Math.random().toString(36).slice(2, 10);
+        localStorage.setItem(USER_KEY, id);
+      }
+      return id;
+    }
+
+    function getUserNick() {
+      return localStorage.getItem(NICK_KEY) || ("Гость#" + getUserId().slice(-4).toUpperCase());
+    }
+
+    function isAdmin() {
+      return sessionStorage.getItem(ADMIN_SESSION_KEY) === "1";
+    }
+
+    let units = [...DEFAULT_UNITS];
+    let giveaways = {};
+    let onlineUsers = {};
+    let maintenanceEnabled = false;
+    const dbStatusEl = document.getElementById("dbStatusText");
+
+    async function dbRequest(path, method = "GET", body = null) {
+      const base = FIREBASE_DB_URL.replace(/\/+$/, "");
+      const opts = { method, headers: { "Content-Type": "application/json" } };
+      if (body !== null) opts.body = JSON.stringify(body);
+      const res = await fetch(`${base}/${path}.json`, opts);
+      if (!res.ok) throw new Error("DB Error");
+      return res.json();
+    }
+
+    function applyMaintenanceGate() {
+      const blocked = maintenanceEnabled && !isAdmin();
+      document.getElementById("maintenanceScreen").classList.toggle("hidden", !blocked);
+      document.getElementById("mainApp").classList.toggle("hidden", blocked);
+
+      const btn = document.getElementById("toggleMaintBtn");
+      const label = document.getElementById("maintStatusLabel");
+      if (btn) {
+        btn.textContent = maintenanceEnabled ? "Выключить техперерыв" : "Включить техперерыв";
+      }
+      if (label) {
+        label.textContent = maintenanceEnabled ? "АКТИВЕН (остальные не видят сайт)" : "ВЫКЛЮЧЕН";
+        label.style.color = maintenanceEnabled ? "#fbbf24" : "#4ade80";
+      }
+    }
+
+    function parseNum(str) {
+      const clean = String(str || "0").replace(/,/g, "").trim().toUpperCase();
+      if (clean.endsWith("K")) return parseFloat(clean) * 1000;
+      if (clean.endsWith("M")) return parseFloat(clean) * 1000000;
+      return parseFloat(clean) || 0;
+    }
+
+    function renderPrices() {
+      const q = document.getElementById("searchInput").value.trim().toLowerCase();
+      const cls = document.getElementById("classFilter").value;
+      const trd = document.getElementById("trendFilter").value;
+
+      const list = units.map(u => {
+        const cur = parseNum(u.rawValue);
+        const prev = parseNum(u.prevRaw);
+        const trend = cur > prev ? "UP" : cur < prev ? "DOWN" : "FLAT";
+        return { ...u, trend };
+      }).filter(u => {
+        if (q && !u.name.toLowerCase().includes(q)) return false;
+        if (cls !== "ALL" && u.className !== cls) return false;
+        if (trd !== "ALL" && u.trend !== trd) return false;
+        return true;
+      });
+
+      document.getElementById("unitsCount").textContent = String(units.length);
+      document.getElementById("pricesGrid").innerHTML = list.map(u => {
+        const badgeClass = u.trend === "UP" ? "up" : u.trend === "DOWN" ? "down" : "flat";
+        const badgeText = u.trend === "UP" ? "▲ Поднялась" : u.trend === "DOWN" ? "▼ Упала" : "— Без изменений";
+        return `
+          <article class="item-card">
+            <div class="item-top">
+              <div>
+                <div class="item-class">${u.className}</div>
+                <div class="item-name">${u.name}</div>
+              </div>
+              <span class="badge ${badgeClass}">${badgeText}</span>
+            </div>
+            <div class="item-bottom">
+              <div class="value-price">${u.rawValue}</div>
+              <div class="prev-price">Было: ${u.prevRaw}</div>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function pickWinners(participantsObj, count) {
+      const entries = Object.values(participantsObj || {});
+      const winners = [];
+      const n = Math.min(count, entries.length);
+      for (let i = 0; i < n; i++) {
+        const idx = Math.floor(Math.random() * entries.length);
+        winners.push(entries.splice(idx, 1)[0]);
+      }
+      return winners;
+    }
+
+    function formatLeft(ms) {
+      if (ms <= 0) return "Завершена";
+      const sec = Math.floor(ms / 1000);
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      return `${m}м ${String(s).padStart(2, "0")}с`;
+    }
+
+    async function sendHeartbeat() {
+      try {
+        const uid = getUserId();
+        await dbRequest(`online/${uid}`, "PUT", {
+          nick: isAdmin() ? "Рюи (Создатель)" : getUserNick(),
+          lastSeen: Date.now()
+        });
+      } catch {}
+    }
+
+    async function syncFromCloud() {
+      try {
+        const [gwData, onlineData, maintData] = await Promise.all([
+          dbRequest("giveaways"),
+          dbRequest("online"),
+          dbRequest("settings/maintenance")
+        ]);
+        giveaways = gwData || {};
+        maintenanceEnabled = Boolean(maintData);
+        applyMaintenanceGate();
+
+        const now = Date.now();
+        const activeOnline = {};
+        for (const [uid, info] of Object.entries(onlineData || {})) {
+          if (info && info.lastSeen && now - info.lastSeen < 35000) {
+            activeOnline[uid] = info;
+          }
+        }
+        onlineUsers = activeOnline;
+        const onlineCount = Math.max(1, Object.keys(onlineUsers).length);
+        document.getElementById("onlineCountHeader").textContent = String(onlineCount);
+
+        for (const [id, gw] of Object.entries(giveaways)) {
+          if (gw && !gw.finished && now >= gw.endsAt) {
+            const winners = pickWinners(gw.participants, gw.winnersCount);
+            gw.finished = true;
+            gw.winners = winners;
+            await dbRequest(`giveaways/${id}`, "PATCH", { finished: true, winners });
+          }
+        }
+
+        const time = new Date().toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+        dbStatusEl.textContent = `Онлайн (${time})`;
+      } catch {
+        dbStatusEl.textContent = "Ошибка сети";
+      }
+
+      renderGiveaways();
+      renderAdminPanel();
+    }
+
+    function renderGiveaways() {
+      const myId = getUserId();
+      const adminMode = isAdmin();
+      const entries = Object.entries(giveaways || {})
+        .filter(([, gw]) => gw && gw.text)
+        .sort((a, b) => (b[1].createdAt || 0) - (a[1].createdAt || 0));
+
+      document.getElementById("gwCount").textContent = String(entries.length);
+      const grid = document.getElementById("gwGrid");
+
+      if (!entries.length) {
+        grid.innerHTML = `<div class="item-card"><div class="subtitle">Пока нет активных роздач. Создай первую выше!</div></div>`;
+        return;
+      }
+
+      grid.innerHTML = entries.map(([id, gw]) => {
+        const isCreator = gw.creatorId === myId;
+        const participants = gw.participants || {};
+        const joined = Boolean(participants[myId]);
+        const count = Object.keys(participants).length;
+        const leftText = gw.finished ? "Завершена" : `Осталось: ${formatLeft(gw.endsAt - Date.now())}`;
+
+        let actionBlock = "";
+        if (gw.finished) {
+          const wList = Array.isArray(gw.winners) && gw.winners.length ? gw.winners.join(", ") : "никто не участвовал";
+          actionBlock = `<div class="winners-box"><strong>Победители:</strong> ${wList}</div>`;
+        } else if (isCreator) {
+          actionBlock = `<div class="creator-note">Вы создатель — участие недоступно</div>`;
+        } else {
+          actionBlock = `<button type="button" class="${joined ? "secondary-btn" : "action-btn"}" onclick="toggleJoin('${id}')">${joined ? "Выйти из участия" : "Участвовать"}</button>`;
+        }
+
+        const deleteBtn = (isCreator || adminMode)
+          ? `<button type="button" class="danger-btn" onclick="deleteGiveaway('${id}')">${adminMode && !isCreator ? "Удалить (Админ)" : "Удалить"}</button>`
+          : "";
+
+        return `
+          <article class="item-card">
+            <div>
+              <div class="item-class">Создал: ${gw.author} • ${leftText}</div>
+              <div class="item-name" style="margin-top:4px; white-space:pre-line;">${gw.text}</div>
+            </div>
+            <div class="gw-meta">
+              <span>Победителей: <strong>${gw.winnersCount}</strong></span>
+              <span>Участников: <strong>${count}</strong></span>
+            </div>
+            <div class="gw-actions">
+              ${actionBlock}
+              ${deleteBtn}
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderAdminPanel() {
+      const logged = isAdmin();
+      document.getElementById("adminLoginBox").classList.toggle("hidden", logged);
+      document.getElementById("adminPanelBox").classList.toggle("hidden", !logged);
+      if (!logged) return;
+
+      applyMaintenanceGate();
+
+      const onlineList = Object.values(onlineUsers);
+      document.getElementById("adminOnlineCount").textContent = String(Math.max(1, onlineList.length));
+      document.getElementById("adminOnlineList").textContent = onlineList.length
+        ? onlineList.map(u => u.nick || "Гость").join(", ")
+        : "Рюи (Создатель)";
+
+      const entries = Object.entries(giveaways || {})
+        .filter(([, gw]) => gw && gw.text)
+        .sort((a, b) => (b[1].createdAt || 0) - (a[1].createdAt || 0));
+
+      const activeCount = entries.filter(([, gw]) => !gw.finished).length;
+      const totalParticipants = entries.reduce((sum, [, gw]) => sum + Object.keys(gw.participants || {}).length, 0);
+
+      document.getElementById("adminActiveGw").textContent = String(activeCount);
+      document.getElementById("adminTotalParticipants").textContent = String(totalParticipants);
+
+      const adminGrid = document.getElementById("adminGwGrid");
+      if (!entries.length) {
+        adminGrid.innerHTML = `<div class="item-card"><div class="subtitle">Розыгрышей в базе нет.</div></div>`;
+        return;
+      }
+
+      adminGrid.innerHTML = entries.map(([id, gw]) => {
+        const pNames = Object.values(gw.participants || {});
+        return `
+          <article class="item-card">
+            <div>
+              <div class="item-class">Автор: ${gw.author} • ${gw.finished ? "Завершён" : formatLeft(gw.endsAt - Date.now())}</div>
+              <div class="item-name" style="margin-top:4px;">${gw.text}</div>
+            </div>
+            <div class="subtitle">Участники (${pNames.length}): ${pNames.length ? pNames.join(", ") : "пока никого"}</div>
+            <div>
+              <button type="button" class="danger-btn" onclick="deleteGiveaway('${id}')">Удалить розыгрыш</button>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    window.toggleJoin = async function(id) {
+      const myId = getUserId();
+      const gw = giveaways[id];
+      if (!gw || gw.finished || gw.creatorId === myId) return;
+
+      const participants = gw.participants || {};
+      if (participants[myId]) {
+        await dbRequest(`giveaways/${id}/participants/${myId}`, "DELETE");
+      } else {
+        let nick = localStorage.getItem(NICK_KEY);
+        if (!nick) {
+          nick = prompt("Введи свой ник в Discord для участия:") || getUserNick();
+          localStorage.setItem(NICK_KEY, nick.trim());
+        }
+        await dbRequest(`giveaways/${id}/participants/${myId}`, "PUT", nick.trim());
+      }
+      await syncFromCloud();
+    };
+
+    window.deleteGiveaway = async function(id) {
+      const myId = getUserId();
+      const gw = giveaways[id];
+      if (!gw) return;
+      if (gw.creatorId !== myId && !isAdmin()) return;
+      await dbRequest(`giveaways/${id}`, "DELETE");
+      await syncFromCloud();
+    };
+
+    document.getElementById("gwForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const author = document.getElementById("gwAuthor").value.trim();
+      const text = document.getElementById("gwText").value.trim();
+      const minutes = Math.max(1, parseInt(document.getElementById("gwMinutes").value, 10) || 5);
+      const winnersCount = Math.max(1, parseInt(document.getElementById("gwWinners").value, 10) || 1);
+      if (!author || !text) return;
+
+      localStorage.setItem(NICK_KEY, author);
+
+      const id = "gw_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6);
+      const payload = {
+        creatorId: getUserId(),
+        author,
+        text,
+        winnersCount,
+        createdAt: Date.now(),
+        endsAt: Date.now() + minutes * 60000,
+        participants: {},
+        winners: [],
+        finished: false
+      };
+
+      await dbRequest(`giveaways/${id}`, "PUT", payload);
+      document.getElementById("gwText").value = "";
+      await syncFromCloud();
+    });
+
+    function handleAdminPasswordLogin(inputEl) {
+      const pass = inputEl.value.trim();
+      if (pass === ADMIN_PASSWORD) {
+        sessionStorage.setItem(ADMIN_SESSION_KEY, "1");
+        inputEl.value = "";
+        applyMaintenanceGate();
+        sendHeartbeat();
+        renderGiveaways();
+        renderAdminPanel();
+      } else {
+        alert("Неверный пароль администратора!");
+      }
+    }
+
+    document.getElementById("adminLoginBtn").addEventListener("click", () => {
+      handleAdminPasswordLogin(document.getElementById("adminPassInput"));
+    });
+
+    document.getElementById("maintLoginBtn").addEventListener("click", () => {
+      handleAdminPasswordLogin(document.getElementById("maintPassInput"));
+    });
+
+    document.getElementById("toggleMaintBtn").addEventListener("click", async () => {
+      if (!isAdmin()) return;
+      maintenanceEnabled = !maintenanceEnabled;
+      await dbRequest("settings/maintenance", "PUT", maintenanceEnabled);
+      applyMaintenanceGate();
+      renderAdminPanel();
+    });
+
+    document.getElementById("adminLogoutBtn").addEventListener("click", () => {
+      sessionStorage.removeItem(ADMIN_SESSION_KEY);
+      applyMaintenanceGate();
+      renderGiveaways();
+      renderAdminPanel();
+    });
+
+    function renderCodes() {
+      document.getElementById("codesCount").textContent = String(CODES.length);
+      document.getElementById("codesGrid").innerHTML = CODES.map(c => `
+        <article class="item-card">
+          <div>
+            <div class="item-class">АКТИВНЫЙ КОД</div>
+            <div class="code-str">${c.code}</div>
+            <div class="subtitle" style="margin-top:6px;">Награда: ${c.reward}</div>
+          </div>
+          <button type="button" class="secondary-btn" onclick="copyCode('${c.code}', this)">Копировать код</button>
+        </article>
+      `).join("");
+    }
+
+    function renderCreators() {
+      document.getElementById("creatorsGrid").innerHTML = CREATORS.map(cr => `
+        <article class="item-card">
+          <div class="item-top">
+            <div>
+              <div class="item-class">КАНАЛ СОЗДАТЕЛЕЙ</div>
+              <div class="item-name">${cr.name}</div>
+            </div>
+            <span class="badge creator">${cr.role}</span>
+          </div>
+          <div class="subtitle" style="margin-top:6px;">${cr.desc}</div>
+        </article>
+      `).join("");
+    }
+
+    window.copyCode = function(code, btn) {
+      navigator.clipboard?.writeText(code).catch(() => {});
+      const prev = btn.textContent;
+      btn.textContent = "Скопировано!";
+      setTimeout(() => { btn.textContent = prev; }, 1200);
+    };
+
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        const tab = btn.dataset.tab;
+        ["prices", "giveaways", "codes", "creators", "admin"].forEach(t => {
+          document.getElementById("tab-" + t).classList.toggle("hidden", t !== tab);
+        });
+      });
+    });
+
+    ["searchInput", "classFilter", "trendFilter"].forEach(id => {
+      document.getElementById(id).addEventListener("input", renderPrices);
+      document.getElementById(id).addEventListener("change", renderPrices);
+    });
+
+    const savedNick = localStorage.getItem(NICK_KEY);
+    if (savedNick) document.getElementById("gwAuthor").value = savedNick;
+
+    renderPrices();
+    renderCodes();
+    renderCreators();
+    sendHeartbeat();
+    syncFromCloud();
+
+    setInterval(renderGiveaways, 1000);
+    setInterval(syncFromCloud, 5000);
+    setInterval(sendHeartbeat, 15000);
+  </script>
+</body>
 </html>
